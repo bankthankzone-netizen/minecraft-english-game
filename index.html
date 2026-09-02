@@ -76,7 +76,7 @@
         .launch-btn:hover { filter: brightness(1.1); }
         .launch-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #b34e00; }
 
-        /* --- Video Intro / Intermission Screen --- */
+        /* --- Video Screen --- */
         #intro-screen {
             position: fixed;
             top: 0;
@@ -89,11 +89,10 @@
             justify-content: center;
             align-items: center;
         }
-        #intro-video {
+        #video-container {
             width: 100%;
             height: 100%;
-            border: none;
-            pointer-events: none;
+            position: relative;
         }
         .skip-btn {
             position: absolute;
@@ -111,6 +110,7 @@
             transition: all 0.2s;
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
             pointer-events: auto;
+            z-index: 10001;
         }
         .skip-btn:hover { background: #55FF55; color: #000; }
 
@@ -316,8 +316,8 @@
             40%, 60% { transform: translate3d(6px, 0, 0); }
         }
 
-        .next-btn, .restart-btn, .level2-btn {
-            margin-top: 25px;
+        .next-btn, .restart-btn, .retry-l2-btn, .level2-btn {
+            margin-top: 15px;
             background: #ffb300;
             color: #000;
             border-color: #ffe082 #ff6f00 #ff6f00 #ffe082;
@@ -326,10 +326,17 @@
             width: 100%;
             text-align: center;
             text-shadow: none;
+            padding: 15px;
+            border-radius: 6px;
+            cursor: pointer;
         }
         .level2-btn {
             background: #00e676;
             border-color: #b9f6ca #00a152 #00a152 #b9f6ca;
+        }
+        .retry-l2-btn {
+            background: #ff9100;
+            border-color: #ffe0b2 #e65100 #e65100 #ffe0b2;
         }
         .hide { display: none !important; }
         .result-title {
@@ -367,13 +374,9 @@
         </div>
     </div>
 
-    <!-- 2. Video Screen (Intro / Victory) -->
+    <!-- 2. Video Screen -->
     <div id="intro-screen" class="hide">
-        <iframe 
-            id="intro-video" 
-            src="" 
-            allow="autoplay; fullscreen; encrypted-media">
-        </iframe>
+        <div id="video-container"></div>
         <button class="skip-btn" id="skip-btn">ข้าม ➔</button>
     </div>
 
@@ -407,12 +410,7 @@
                 <div class="translation-box hide" id="translation-box"></div>
             </div>
 
-            <div class="btn-grid" id="answer-buttons">
-                <button class="btn">Option 1</button>
-                <button class="btn">Option 2</button>
-                <button class="btn">Option 3</button>
-                <button class="btn">Option 4</button>
-            </div>
+            <div class="btn-grid" id="answer-buttons"></div>
 
             <button id="next-btn" class="btn next-btn hide">ข้อถัดไป ➔</button>
         </div>
@@ -425,9 +423,10 @@
             <div class="result-score" id="final-score">0 / 10</div>
             <div id="feedback-msg" class="feedback"></div>
             
-            <!-- Dynamic Action Buttons -->
-            <button id="restart-btn" class="btn restart-btn hide">นักเรียนคนถัดไป 🔄</button>
+            <!-- Action Buttons -->
             <button id="level2-btn" class="btn level2-btn hide">ด่านถัดไป (Level 2) ➔</button>
+            <button id="retry-l2-btn" class="btn retry-l2-btn hide">ลองใหม่อีกครั้ง (Level 2) 🔄</button>
+            <button id="restart-btn" class="btn restart-btn hide">นักเรียนคนถัดไป 🔄</button>
         </div>
     </div>
 
@@ -435,24 +434,33 @@
         const welcomeScreen = document.getElementById("welcome-screen");
         const launchBtn = document.getElementById("launch-btn");
         const introScreen = document.getElementById("intro-screen");
-        const introVideo = document.getElementById("intro-video");
+        const videoContainer = document.getElementById("video-container");
         const skipBtn = document.getElementById("skip-btn");
-        let autoCloseTimer;
         let activeVideoCallback = null;
 
-        function playVideo(videoUrl, durationMs, onEndCallback) {
+        // ฟังก์ชันเล่นวิดีโอผสาน HTML5 Video API เพื่อความแม่นยำเมื่อเล่นจบ
+        function playVideoSrc(videoSrc, onEndCallback) {
             welcomeScreen.classList.add("hide");
             introScreen.classList.remove("hide");
-            introVideo.src = videoUrl;
             activeVideoCallback = onEndCallback;
-            clearTimeout(autoCloseTimer);
-            autoCloseTimer = setTimeout(closeIntro, durationMs);
+            videoContainer.innerHTML = "";
+
+            const videoElement = document.createElement("video");
+            videoElement.src = videoSrc;
+            videoElement.autoplay = true;
+            videoElement.controls = false;
+            videoElement.style.width = "100%";
+            videoElement.style.height = "100%";
+            videoElement.style.objectFit = "contain";
+
+            videoElement.addEventListener("ended", closeIntro);
+            videoContainer.appendChild(videoElement);
+            videoElement.play().catch(() => {});
         }
 
         function closeIntro() {
-            clearTimeout(autoCloseTimer);
             introScreen.classList.add("hide");
-            introVideo.src = "";
+            videoContainer.innerHTML = "";
             if (activeVideoCallback) {
                 const cb = activeVideoCallback;
                 activeVideoCallback = null;
@@ -461,7 +469,7 @@
         }
 
         launchBtn.addEventListener("click", () => {
-            playVideo("https://streamable.com/e/5kuk8m?autoplay=1&muted=0", 18500, () => {});
+            playVideoSrc("https://streamable.com/l/5kuk8m/mp4.mp4", () => {});
         });
 
         skipBtn.addEventListener("click", closeIntro);
@@ -597,7 +605,7 @@
             }
         ];
 
-        // --- LEVEL 2 QUESTIONS (10 ข้อใหม่) ---
+        // --- LEVEL 2 QUESTIONS ---
         const questionsL2 = [
             {
                 question: "1. What item do you use to craft a Torch?",
@@ -696,6 +704,7 @@
         const finalScoreElement = document.getElementById("final-score");
         const feedbackMsg = document.getElementById("feedback-msg");
         const restartButton = document.getElementById("restart-btn");
+        const retryL2Button = document.getElementById("retry-l2-btn");
         const level2Button = document.getElementById("level2-btn");
 
         startGameBtn.addEventListener("click", () => {
@@ -804,6 +813,7 @@
 
             restartButton.classList.add("hide");
             level2Button.classList.add("hide");
+            retryL2Button.classList.add("hide");
 
             if (score === 10) {
                 if (currentLevel === 1) {
@@ -815,9 +825,16 @@
                     restartButton.classList.remove("hide");
                 }
             } else {
-                feedbackMsg.innerText = `ทำได้ ${score}/10 คะแนน ลองใหม่อีกครั้งนะ! 👍`;
-                restartButton.innerText = "นักเรียนคนถัดไป 🔄";
-                restartButton.classList.remove("hide");
+                if (currentLevel === 1) {
+                    feedbackMsg.innerText = `ทำได้ ${score}/10 คะแนน ลองใหม่อีกครั้งนะ! 👍`;
+                    restartButton.innerText = "นักเรียนคนถัดไป 🔄";
+                    restartButton.classList.remove("hide");
+                } else {
+                    feedbackMsg.innerText = `ทำได้ ${score}/10 คะแนน ใน Level 2 ลองอีกทีนะ! 💪`;
+                    retryL2Button.classList.remove("hide");
+                    restartButton.innerText = "เปลี่ยนนักเรียน 👤";
+                    restartButton.classList.remove("hide");
+                }
             }
         }
 
@@ -829,16 +846,23 @@
             showQuestion();
         });
 
+        // ปุ่มเปลี่ยนนักเรียน/เริ่มใหม่ Level 1
         restartButton.addEventListener("click", () => {
             studentNameInput.value = "";
             resultBox.classList.add("hide");
             nameScreen.classList.remove("hide");
         });
 
-        // เมื่อกดปุ่มด่านถัดไป ให้เล่นวิดีโอ Victory แล้วเริ่ม Level 2
+        // ปุ่มลองใหม่ที่ Level 2 ทันที
+        retryL2Button.addEventListener("click", () => {
+            currentLevel = 2;
+            startGame();
+        });
+
+        // กดปุ่มด่านถัดไป: เล่นวิดีโอ แล้วเมื่อวิดีโอจบ ให้ตัดเข้า Level 2 ทันที
         level2Button.addEventListener("click", () => {
             resultBox.classList.add("hide");
-            playVideo("https://streamable.com/e/ri8s22?autoplay=1&muted=0", 15000, () => {
+            playVideoSrc("https://streamable.com/l/ri8s22/mp4.mp4", () => {
                 currentLevel = 2;
                 startGame();
             });
