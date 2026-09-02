@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minecraft English Quiz for Kids</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
-    <!-- Streamable / Player.js SDK -->
+    <!-- Streamable Player JS SDK -->
     <script src="https://cdn.embed.ly/player-0.1.0.min.js"></script>
     <style>
         * {
@@ -428,9 +428,9 @@
         const nameScreen = document.getElementById("name-screen");
         let activeVideoCallback = null;
 
-        // ใช้รหัสคลิปของคุณ ri8s22
-        const STREAMABLE_CODE_INTRO = "ri8s22";
-        const STREAMABLE_CODE_LEVEL2 = "ri8s22";
+        // แยก ID วิดีโอ 2 ตัวอย่างชัดเจน
+        const STREAMABLE_CODE_INTRO = "5kuk8m";   // วิดีโอเปิดเกม
+        const STREAMABLE_CODE_LEVEL2 = "ri8s22";  // วิดีโอขั้นระหว่าง Lv1 และ Lv2
 
         function playVideo(embedCode, onEndCallback) {
             welcomeScreen.classList.add("hide");
@@ -438,7 +438,7 @@
             activeVideoCallback = onEndCallback;
             videoContainer.innerHTML = "";
 
-            // สร้าง iframe ของ Streamable
+            // สร้าง iframe ของ Streamable แบบ Embed
             const iframe = document.createElement("iframe");
             iframe.src = `https://streamable.com/e/${embedCode}?autoplay=1&loop=0&nocontrols=1`;
             iframe.allow = "fullscreen; autoplay";
@@ -447,7 +447,7 @@
 
             videoContainer.appendChild(iframe);
 
-            // ตรวจจับการจบการเล่นผ่าน Player JS SDK
+            // ใช้ Player JS SDK ในการจับเหตุการณ์เล่นจบ
             if (window.playerjs) {
                 const player = new playerjs.Player(iframe);
                 player.on('ready', () => {
@@ -457,7 +457,7 @@
                     closeVideo();
                 });
             } else {
-                // ตัวสำรองกรณี API ไม่ตอบสนอง (จะตัดอัตโนมัติเมื่อเล่นจบ)
+                // สำรองเผื่อ SDK ติดขัด
                 setTimeout(() => {
                     closeVideo();
                 }, 15000); 
@@ -474,7 +474,7 @@
             }
         }
 
-        // กดเริ่มเกม -> เล่นวิดีโอ -> ปิดวิดีโอเข้าหน้ากรอกชื่อ
+        // กดเปิดเกม -> เล่นวิดีโอเปิดเกม (5kuk8m) -> ปิดเข้าหน้าพิมพ์ชื่อ
         launchBtn.addEventListener("click", () => {
             playVideo(STREAMABLE_CODE_INTRO, () => {
                 nameScreen.classList.remove("hide");
@@ -863,6 +863,7 @@
             startGame();
         });
 
+        // กดขึ้น Level 2 -> เล่นวิดีโอคั่น (ri8s22) -> เมื่อเล่นจบเข้าสู่ Level 2
         level2Button.addEventListener("click", () => {
             resultBox.classList.add("hide");
             playVideo(STREAMABLE_CODE_LEVEL2, () => {
