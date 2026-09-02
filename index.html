@@ -170,6 +170,63 @@
     </div>
 
     <script>
+        // สร้างระบบสังเคราะห์เสียง Web Audio API
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        // เสียงตอบถูก (ปิ๊งป่อง 2 ตัวโน้ต)
+        function playCorrectSound() {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const now = audioCtx.currentTime;
+            
+            // โน้ตที่ 1 (E5)
+            const osc1 = audioCtx.createOscillator();
+            const gain1 = audioCtx.createGain();
+            osc1.type = 'triangle';
+            osc1.frequency.setValueAtTime(659.25, now);
+            gain1.gain.setValueAtTime(0.3, now);
+            gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+            osc1.connect(gain1);
+            gain1.connect(audioCtx.destination);
+            osc1.start(now);
+            osc1.stop(now + 0.15);
+
+            // โน้ตที่ 2 (G5)
+            const osc2 = audioCtx.createOscillator();
+            const gain2 = audioCtx.createGain();
+            osc2.type = 'triangle';
+            osc2.frequency.setValueAtTime(783.99, now + 0.12);
+            gain2.gain.setValueAtTime(0.4, now + 0.12);
+            gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+            osc2.connect(gain2);
+            gain2.connect(audioCtx.destination);
+            osc2.start(now + 0.12);
+            osc2.stop(now + 0.35);
+        }
+
+        // เสียงตอบผิด (ตึ๊ดดด เสียงความถี่ต่ำ)
+        function playWrongSound() {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const now = audioCtx.currentTime;
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(160, now);
+            osc.frequency.exponentialRampToValueAtTime(80, now + 0.3);
+            
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.3);
+        }
+
         const questions = [
             { question: "1. What color is a Creeper?", answers: ["A) Blue", "B) Green", "C) Red", "D) Yellow"], correct: 1 },
             { question: "2. Which mob is pink and gives you meat?", answers: ["A) Pig", "B) Cow", "C) Sheep", "D) Chicken"], correct: 0 },
@@ -237,10 +294,12 @@
 
             if (isCorrect) {
                 selectedButton.classList.add("correct");
+                playCorrectSound(); // เล่นเสียงตอบถูก
                 score++;
                 scoreElement.innerText = score;
             } else {
                 selectedButton.classList.add("wrong");
+                playWrongSound(); // เล่นเสียงตอบผิด
             }
 
             Array.from(answerButtonsElement.children).forEach(button => {
