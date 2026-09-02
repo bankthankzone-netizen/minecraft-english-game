@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft English Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+        body {
+            background-color: #5b8731;
+            background-image: 
+                radial-gradient(#74a33e 15%, transparent 16%),
+                radial-gradient(#4a6f28 15%, transparent 16%);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+            font-family: 'Kanit', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .quiz-container {
+            background-color: #313131;
+            border: 4px solid #000;
+            outline: 4px solid #737373;
+            box-shadow: 0 10px 0 #000;
+            padding: 25px;
+            width: 100%;
+            max-width: 550px;
+            text-align: center;
+            color: #fff;
+            border-radius: 2px;
+        }
+        h1 {
+            font-family: 'Press Start 2P', cursive;
+            color: #55FF55;
+            font-size: 1.2rem;
+            text-shadow: 3px 3px #000;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .score-board {
+            font-family: 'Press Start 2P', cursive;
+            background: #202020;
+            padding: 10px;
+            border: 2px solid #555;
+            color: #FFFF55;
+            font-size: 0.8rem;
+            margin-bottom: 20px;
+        }
+        .question-box {
+            background: #2c2c2c;
+            border: 2px solid #555;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #FFF;
+            margin-bottom: 10px;
+        }
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        .btn {
+            background: #8B8B8B;
+            border: 4px solid;
+            border-color: #FFF #373737 #373737 #FFF;
+            color: #FFF;
+            padding: 12px;
+            font-size: 1.1rem;
+            font-family: 'Kanit', sans-serif;
+            cursor: pointer;
+            text-shadow: 2px 2px #000;
+            transition: all 0.1s;
+        }
+        .btn:hover {
+            background: #A8A8A8;
+        }
+        .btn:active {
+            border-color: #373737 #FFF #FFF #373737;
+        }
+        .btn.correct {
+            background: #55FF55 !important;
+            color: #000 !important;
+            text-shadow: none !important;
+            border-color: #AAFFAA #00AA00 #00AA00 #AAFFAA !important;
+        }
+        .btn.wrong {
+            background: #FF5555 !important;
+            color: #FFF !important;
+            border-color: #FFAAAA #AA0000 #AA0000 #FFAAAA !important;
+        }
+        .next-btn, .restart-btn {
+            margin-top: 20px;
+            background: #55FF55;
+            color: #000;
+            border-color: #AAFFAA #00AA00 #00AA00 #AAFFAA;
+            font-weight: bold;
+            width: 100%;
+        }
+        .hide {
+            display: none;
+        }
+        .result-title {
+            font-family: 'Press Start 2P', cursive;
+            color: #FFFF55;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <h1>MINECRAFT<br>ENGLISH QUIZ</h1>
+        
+        <div id="quiz-box">
+            <div class="score-board">
+                QUESTION <span id="current-quest">1</span>/10 | SCORE: <span id="score">0</span>
+            </div>
+
+            <div class="question-box">
+                <div class="question-text" id="question">Question text here</div>
+            </div>
+
+            <div class="btn-grid" id="answer-buttons">
+                <button class="btn">Option 1</button>
+                <button class="btn">Option 2</button>
+                <button class="btn">Option 3</button>
+                <button class="btn">Option 4</button>
+            </div>
+
+            <button id="next-btn" class="btn next-btn hide">NEXT ➔</button>
+        </div>
+
+        <div id="result-box" class="hide">
+            <h2 class="result-title">GAME OVER!</h2>
+            <p style="font-size: 1.5rem;">คุณได้คะแนนทั้งหมด</p>
+            <p style="font-size: 3rem; color: #55FF55; font-weight: bold; margin: 10px 0;" id="final-score">0 / 10</p>
+            <p id="feedback-msg" style="font-size: 1.2rem; margin-bottom: 20px;"></p>
+            <button id="restart-btn" class="btn restart-btn">PLAY AGAIN 🔄</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "1. What color is a Creeper?", answers: ["A) Blue", "B) Green", "C) Red", "D) Yellow"], correct: 1 },
+            { question: "2. Which mob is pink and gives you meat?", answers: ["A) Pig", "B) Cow", "C) Sheep", "D) Chicken"], correct: 0 },
+            { question: "3. What tool do you use to mine ores and stone?", answers: ["A) Sword", "B) Axe", "C) Pickaxe", "D) Shovel"], correct: 2 },
+            { question: "4. Where do you sleep to skip the night?", answers: ["A) Chair", "B) Bed", "C) Table", "D) Door"], correct: 1 },
+            { question: "5. Which animal gives you milk?", answers: ["A) Pig", "B) Sheep", "C) Cow", "D) Chicken"], correct: 2 },
+            { question: "6. What weapon do you use to shoot arrows?", answers: ["A) Sword", "B) Bow", "C) Shield", "D) Axe"], correct: 1 },
+            { question: "7. Which food can you make with wheat?", answers: ["A) Apple", "B) Bread", "C) Fish", "D) Carrot"], correct: 1 },
+            { question: "8. What happens to a Zombie when the sun comes up?", answers: ["A) It sleeps", "B) It dances", "C) It burns", "D) It swims"], correct: 2 },
+            { question: "9. What color is a Diamond?", answers: ["A) Red", "B) Blue", "C) Green", "D) Pink"], correct: 1 },
+            { question: "10. How many eyes does a Spider have in Minecraft?", answers: ["A) 2", "B) 4", "C) 6", "D) 8"], correct: 3 }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        const questionElement = document.getElementById("question");
+        const answerButtonsElement = document.getElementById("answer-buttons");
+        const nextButton = document.getElementById("next-btn");
+        const currentQuestElement = document.getElementById("current-quest");
+        const scoreElement = document.getElementById("score");
+        const quizBox = document.getElementById("quiz-box");
+        const resultBox = document.getElementById("result-box");
+        const finalScoreElement = document.getElementById("final-score");
+        const feedbackMsg = document.getElementById("feedback-msg");
+        const restartButton = document.getElementById("restart-btn");
+
+        function startGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            scoreElement.innerText = score;
+            quizBox.classList.remove("hide");
+            resultBox.classList.add("hide");
+            showQuestion();
+        }
+
+        function showQuestion() {
+            resetState();
+            let currentQuestion = questions[currentQuestionIndex];
+            currentQuestElement.innerText = currentQuestionIndex + 1;
+            questionElement.innerText = currentQuestion.question;
+
+            currentQuestion.answers.forEach((answer, index) => {
+                const button = document.createElement("button");
+                button.innerText = answer;
+                button.classList.add("btn");
+                if (index === currentQuestion.correct) {
+                    button.dataset.correct = true;
+                }
+                button.addEventListener("click", selectAnswer);
+                answerButtonsElement.appendChild(button);
+            });
+        }
+
+        function resetState() {
+            nextButton.classList.add("hide");
+            while (answerButtonsElement.firstChild) {
+                answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+            }
+        }
+
+        function selectAnswer(e) {
+            const selectedButton = e.target;
+            const isCorrect = selectedButton.dataset.correct === "true";
+
+            if (isCorrect) {
+                selectedButton.classList.add("correct");
+                score++;
+                scoreElement.innerText = score;
+            } else {
+                selectedButton.classList.add("wrong");
+            }
+
+            Array.from(answerButtonsElement.children).forEach(button => {
+                if (button.dataset.correct === "true") {
+                    button.classList.add("correct");
+                }
+                button.disabled = true;
+            });
+
+            if (questions.length > currentQuestionIndex + 1) {
+                nextButton.classList.remove("hide");
+            } else {
+                setTimeout(showResult, 1200);
+            }
+        }
+
+        function showResult() {
+            quizBox.classList.add("hide");
+            resultBox.classList.remove("hide");
+            finalScoreElement.innerText = `${score} / ${questions.length}`;
+            
+            if (score === 10) {
+                feedbackMsg.innerText = "เก่งมาก! ตอบถูกหมดทุกข้อเลย 🏆";
+            } else if (score >= 7) {
+                feedbackMsg.innerText = "ยอดเยี่ยมมาก! คุณรู้จัก Minecraft ดีมาก 👍";
+            } else if (score >= 5) {
+                feedbackMsg.innerText = "ผ่านแล้ว! ลองเล่นอีกรอบให้ได้เต็มดูนะ 😃";
+            } else {
+                feedbackMsg.innerText = "พยายามอีกนิด! ลองใหม่อีกครั้งนะ 🎮";
+            }
+        }
+
+        nextButton.addEventListener("click", () => {
+            currentQuestionIndex++;
+            showQuestion();
+        });
+
+        restartButton.addEventListener("click", startGame);
+
+        startGame();
+    </script>
+</body>
+</html>
