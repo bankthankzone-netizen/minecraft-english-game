@@ -458,7 +458,7 @@
 
         const questions = [
             { question: "1. What color is a Creeper?", translation: "คีปเปอร์มีสีอะไร?", answers: ["A) Blue", "B) Green", "C) Red", "D) Yellow"], correct: 1 },
-            { question: "2. Which mob is pink and gives you meat?", translation: "มอนสเตอร์ตัวไหนมีสีชมพูและให้เนื้อ?", answers: ["A) Pig", "B) Cow", "C) Sheep", "D) Chicken"], correct: 0 },
+            { question: "2. Which animal is pink and gives you meat?", translation: "สัตว์ตัวไหนมีสีชมพูและให้เนื้อ?", answers: ["A) Pig", "B) Cow", "C) Sheep", "D) Chicken"], correct: 0 },
             { question: "3. What tool do you use to mine ores and stone?", translation: "อุปกรณ์อะไรที่คุณใช้ขุดแร่และหิน?", answers: ["A) Sword", "B) Axe", "C) Pickaxe", "D) Shovel"], correct: 2 },
             { question: "4. Where do you sleep to skip the night?", translation: "คุณนอนที่ไหนเพื่อข้ามเวลากลางคืน?", answers: ["A) Chair", "B) Bed", "C) Table", "D) Door"], correct: 1 },
             { question: "5. Which animal gives you milk?", translation: "สัตว์ชนิดใดให้ นม แก่คุณ?", answers: ["A) Pig", "B) Sheep", "C) Cow", "D) Chicken"], correct: 2 },
@@ -561,7 +561,6 @@
                 playWrongSound();
             }
 
-            // แสดงเฉลยด้วยการเพิ่มเอฟเฟกต์สมูท
             Array.from(answerButtonsElement.children).forEach(button => {
                 if (button.dataset.correct === "true") {
                     button.classList.add("correct");
