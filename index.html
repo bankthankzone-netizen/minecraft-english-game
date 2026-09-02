@@ -25,7 +25,7 @@
             padding: 15px;
         }
 
-        /* --- Welcome Screen --- */
+        /* --- 1. Welcome Screen (หน้าแรกสุด) --- */
         #welcome-screen {
             position: fixed;
             top: 0;
@@ -76,7 +76,7 @@
         .launch-btn:hover { filter: brightness(1.1); }
         .launch-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #b34e00; }
 
-        /* --- Video Screen --- */
+        /* --- 2. Video Screen (อยู่ระหว่างหน้าแรกกับหน้าลงชื่อ) --- */
         #intro-screen {
             position: fixed;
             top: 0;
@@ -114,7 +114,7 @@
         }
         .skip-btn:hover { background: #55FF55; color: #000; }
 
-        /* --- Main Quiz Container --- */
+        /* --- 3. Main Quiz Container --- */
         .quiz-container {
             background-color: rgba(43, 43, 43, 0.92);
             border: 6px solid #000;
@@ -366,7 +366,7 @@
 </head>
 <body>
 
-    <!-- 1. Welcome Screen -->
+    <!-- 1. Welcome Screen (หน้าแรก) -->
     <div id="welcome-screen">
         <div class="welcome-card">
             <h2>MINECRAFT<br>QUIZ GAME</h2>
@@ -374,7 +374,7 @@
         </div>
     </div>
 
-    <!-- 2. Video Screen -->
+    <!-- 2. Video Screen (เล่นวิดีโอคั่นระหว่างหน้าแรกและหน้าลงชื่อ) -->
     <div id="intro-screen" class="hide">
         <div id="video-container"></div>
         <button class="skip-btn" id="skip-btn">ข้าม ➔</button>
@@ -384,7 +384,7 @@
     <div class="quiz-container">
         <h1>MINECRAFT<br>ENGLISH QUIZ</h1>
         
-        <!-- Name Screen -->
+        <!-- Name Screen (หน้าลงชื่อ) -->
         <div id="name-screen">
             <div class="name-box">
                 <label for="student-name">👤 พิมพ์ชื่อนักเรียนก่อนเริ่มเล่น:</label>
@@ -436,9 +436,10 @@
         const introScreen = document.getElementById("intro-screen");
         const videoContainer = document.getElementById("video-container");
         const skipBtn = document.getElementById("skip-btn");
+        const nameScreen = document.getElementById("name-screen");
         let activeVideoCallback = null;
 
-        // ลิงก์ Direct MP4 จาก Streamable
+        // ลิงก์ Direct MP4
         const VIDEO_INTRO = "https://cdn-cf-east.streamable.com/video/mp4/5kuk8m.mp4";
         const VIDEO_LEVEL2 = "https://cdn-cf-east.streamable.com/video/mp4/ri8s22.mp4";
 
@@ -452,6 +453,7 @@
             videoElement.src = videoSrc;
             videoElement.autoplay = true;
             videoElement.playsInline = true;
+            videoElement.muted = false; // ปิด Mute เพื่อให้มีเสียงทันทีหลังผู้เล่นกดปุ่ม
             videoElement.controls = false;
             videoElement.style.width = "100%";
             videoElement.style.height = "100%";
@@ -459,19 +461,17 @@
 
             videoElement.addEventListener("ended", closeIntro);
             
-            // กรณีโหลดวิดีโอไม่ได้ ให้ข้ามทันที
             videoElement.addEventListener("error", () => {
-                console.warn("วิดีโอโหลดไม่สำเร็จ สลับไปหน้าถัดไปอัตโนมัติ");
+                console.warn("วิดีโอมีปัญหา ข้ามไปส่วนถัดไปอัตโนมัติ");
                 closeIntro();
             });
 
             videoContainer.appendChild(videoElement);
 
-            // คำสั่งบังคับเล่นวิดีโอ
             const playPromise = videoElement.play();
             if (playPromise !== undefined) {
                 playPromise.catch(error => {
-                    console.warn("Autoplay โดนบล็อก ลองเล่นแบบปิดเสียง:", error);
+                    console.warn("Autoplay โดนบล็อก ลองเปิดเสียงหลังจากได้รับ Interaction:", error);
                     videoElement.muted = true;
                     videoElement.play().catch(() => closeIntro());
                 });
@@ -488,8 +488,11 @@
             }
         }
 
+        // เมื่อกด "เริ่มเล่นเกม 🎮" จากหน้าแรก -> เล่นวิดีโอ 5kuk8m มีเสียง -> เล่นจบเปิดหน้าลงชื่อทันที
         launchBtn.addEventListener("click", () => {
-            playVideoSrc(VIDEO_INTRO, () => {});
+            playVideoSrc(VIDEO_INTRO, () => {
+                nameScreen.classList.remove("hide");
+            });
         });
 
         skipBtn.addEventListener("click", closeIntro);
@@ -704,7 +707,6 @@
         let score = 0;
         let studentName = "";
 
-        const nameScreen = document.getElementById("name-screen");
         const studentNameInput = document.getElementById("student-name");
         const startGameBtn = document.getElementById("start-game-btn");
         const playerNameText = document.getElementById("player-name-text");
@@ -877,7 +879,6 @@
             startGame();
         });
 
-        // ปุ่มผ่านไป Level 2 -> เล่นวิดีโอตัวที่สอง แล้วสลับเข้าด่าน 2
         level2Button.addEventListener("click", () => {
             resultBox.classList.add("hide");
             playVideoSrc(VIDEO_LEVEL2, () => {
