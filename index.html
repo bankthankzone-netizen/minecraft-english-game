@@ -11,12 +11,12 @@
             user-select: none;
         }
         body {
-            background-color: #4a6f28;
-            background-image: 
-                radial-gradient(#74a33e 20%, transparent 20%),
-                radial-gradient(#5b8731 20%, transparent 20%);
-            background-size: 80px 80px;
-            background-position: 0 0, 40px 40px;
+            /* ตั้งค่ารูปภาพพื้นหลัง Minecraft */
+            background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://i.postimg.cc/c4PVz0FK/i-tried-recreating-that-one-minecraft-wallpaper-that-was-v0-5uuduk40yno71.webp');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
             font-family: 'Kanit', sans-serif;
             display: flex;
             justify-content: center;
@@ -67,16 +67,17 @@
 
         /* --- หน้าเกมหลัก --- */
         .quiz-container {
-            background-color: #2b2b2b;
+            background-color: rgba(43, 43, 43, 0.92);
             border: 6px solid #000;
             outline: 6px solid #737373;
-            box-shadow: 0 12px 0 #000;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.7);
             padding: 25px 20px;
             width: 100%;
             max-width: 680px;
             text-align: center;
             color: #fff;
             border-radius: 8px;
+            backdrop-filter: blur(3px);
         }
         h1 {
             font-family: 'Press Start 2P', cursive;
@@ -280,11 +281,10 @@
         function closeIntro() {
             clearTimeout(autoCloseTimer);
             introScreen.classList.add("hide");
-            // หยุดการเล่นวิดีโอและตัดเสียงทันทีโดยการล้าง src
             introVideo.src = "";
         }
 
-        // ตัดเข้าเกมและหยุดเสียงวิดีโออัตโนมัติเมื่อครบ 18 วินาที (18000 ms)
+        // ตัดเข้าเกมและหยุดเสียงวิดีโออัตโนมัติเมื่อครบ 18 วินาที
         autoCloseTimer = setTimeout(closeIntro, 18000);
 
         skipBtn.addEventListener("click", closeIntro);
