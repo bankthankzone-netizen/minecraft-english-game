@@ -579,7 +579,7 @@
             window.speechSynthesis.speak(utterance);
         }
 
-        // --- LEVEL 1 QUESTIONS (พร้อมคำศัพท์ยาก) ---
+        // --- LEVEL 1 QUESTIONS (ตัด Creeper ออกจากข้อ 1 แล้ว) ---
         const questionsL1 = [
             { 
                 question: "1. What color is a Creeper?", 
@@ -588,8 +588,7 @@
                 answersTranslation: ["A) สีน้ำเงิน", "B) สีเขียว", "C) สีแดง", "D) สีเหลือง"],
                 correct: 1,
                 vocab: [
-                    { word: "Color", phonetic: "คัล-เออะ", meaning: "สี" },
-                    { word: "Creeper", phonetic: "ครี-เพอร์", meaning: "มอนสเตอร์ระเบิดตัวเขียวในเกม" }
+                    { word: "Color", phonetic: "คัล-เออะ", meaning: "สี" }
                 ]
             },
             { 
@@ -692,7 +691,7 @@
             }
         ];
 
-        // --- LEVEL 2 QUESTIONS (พร้อมคำศัพท์ยาก) ---
+        // --- LEVEL 2 QUESTIONS (เปลี่ยน Mob เป็น Monster ในข้อ 8 แล้ว) ---
         const questionsL2 = [
             {
                 question: "1. What item do you use to craft a Torch?",
@@ -772,7 +771,7 @@
                 ]
             },
             {
-                question: "8. What mob flies in the sky if you do not sleep for days?",
+                question: "8. What monster flies in the sky if you do not sleep for days?",
                 translation: "มอนสเตอร์ตัวใดจะบินบนฟ้าถ้าคุณไม่นอนหลายวัน?",
                 answers: ["A) Bat", "B) Ghast", "C) Phantom", "D) Blaze"],
                 answersTranslation: ["A) ค้างคาว", "B) แกสต์", "C) แฟนทอม", "D) เบลซ"],
