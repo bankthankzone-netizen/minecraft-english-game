@@ -468,6 +468,7 @@
 
         const STREAMABLE_CODE_INTRO = "5kuk8m";   // วิดีโอเปิดเกม
         const STREAMABLE_CODE_LEVEL2 = "ri8s22";  // วิดีโอขั้นระหว่าง Lv1 และ Lv2
+        const STREAMABLE_CODE_VICTORY = "pdm1py"; // วิดีโอยินดีเมื่อผ่าน Lv2 ครบ 10 ข้อ
 
         function playVideo(embedCode, onEndCallback) {
             welcomeScreen.classList.add("hide");
@@ -579,7 +580,7 @@
             window.speechSynthesis.speak(utterance);
         }
 
-        // --- LEVEL 1 QUESTIONS (ตัด Creeper ออกจากข้อ 1 แล้ว) ---
+        // --- LEVEL 1 QUESTIONS ---
         const questionsL1 = [
             { 
                 question: "1. What color is a Creeper?", 
@@ -691,7 +692,7 @@
             }
         ];
 
-        // --- LEVEL 2 QUESTIONS (เปลี่ยน Mob เป็น Monster ในข้อ 8 แล้ว) ---
+        // --- LEVEL 2 QUESTIONS ---
         const questionsL2 = [
             {
                 question: "1. What item do you use to craft a Torch?",
@@ -950,6 +951,15 @@
 
         function showResult() {
             quizBox.classList.add("hide");
+            
+            // เช็คว่าถ้าเป็น Level 2 และตอบถูกครบ 10 ข้อ ให้เล่นวิดีโอยินดีก่อนกลับหน้าลงชื่อใหม่
+            if (currentLevel === 2 && score === 10) {
+                playVideo(STREAMABLE_CODE_VICTORY, () => {
+                    resetToNameScreen();
+                });
+                return;
+            }
+
             resultBox.classList.remove("hide");
             finalPlayerName.innerText = `👤 ${studentName}`;
             finalScoreElement.innerText = `${score} / 10`;
@@ -962,10 +972,6 @@
                 if (currentLevel === 1) {
                     feedbackMsg.innerText = "สุดยอดมาก! ผ่าน Level 1 ด้วยคะแนนเต็ม 🏆";
                     level2Button.classList.remove("hide");
-                } else {
-                    feedbackMsg.innerText = "ยอดเยี่ยมที่สุด! คุณผ่านครบทั้ง 2 ด่านแล้ว 👑";
-                    restartButton.innerText = "นักเรียนคนถัดไป 🔄";
-                    restartButton.classList.remove("hide");
                 }
             } else {
                 if (currentLevel === 1) {
@@ -981,6 +987,12 @@
             }
         }
 
+        function resetToNameScreen() {
+            studentNameInput.value = "";
+            resultBox.classList.add("hide");
+            nameScreen.classList.remove("hide");
+        }
+
         speakButton.addEventListener("click", speakQuestion);
         translateButton.addEventListener("click", toggleTranslation);
         
@@ -989,11 +1001,7 @@
             showQuestion();
         });
 
-        restartButton.addEventListener("click", () => {
-            studentNameInput.value = "";
-            resultBox.classList.add("hide");
-            nameScreen.classList.remove("hide");
-        });
+        restartButton.addEventListener("click", resetToNameScreen);
 
         retryL2Button.addEventListener("click", () => {
             currentLevel = 2;
