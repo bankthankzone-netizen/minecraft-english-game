@@ -343,7 +343,7 @@
             40%, 60% { transform: translate3d(6px, 0, 0); }
         }
 
-        .next-btn, .restart-btn, .retry-l2-btn, .level2-btn {
+        .next-btn, .restart-btn, .retry-l2-btn, .level2-btn, .victory-video-btn {
             margin-top: 15px;
             background: #ffb300;
             color: #000;
@@ -358,6 +358,10 @@
             cursor: pointer;
         }
         .level2-btn {
+            background: #00e676;
+            border-color: #b9f6ca #00a152 #00a152 #b9f6ca;
+        }
+        .victory-video-btn {
             background: #00e676;
             border-color: #b9f6ca #00a152 #00a152 #b9f6ca;
         }
@@ -453,6 +457,7 @@
             
             <!-- Action Buttons -->
             <button id="level2-btn" class="btn level2-btn hide">ด่านถัดไป (Level 2) ➔</button>
+            <button id="victory-video-btn" class="btn victory-video-btn hide">ดูวิดีโอฉลองชัยชนะ! 🏆</button>
             <button id="retry-l2-btn" class="btn retry-l2-btn hide">ลองใหม่อีกครั้ง (Level 2) 🔄</button>
             <button id="restart-btn" class="btn restart-btn hide">นักเรียนคนถัดไป 🔄</button>
         </div>
@@ -833,6 +838,7 @@
         const restartButton = document.getElementById("restart-btn");
         const retryL2Button = document.getElementById("retry-l2-btn");
         const level2Button = document.getElementById("level2-btn");
+        const victoryVideoBtn = document.getElementById("victory-video-btn");
 
         startGameBtn.addEventListener("click", () => {
             const enteredName = studentNameInput.value.trim();
@@ -951,15 +957,6 @@
 
         function showResult() {
             quizBox.classList.add("hide");
-            
-            // เช็คว่าถ้าเป็น Level 2 และตอบถูกครบ 10 ข้อ ให้เล่นวิดีโอยินดีก่อนกลับหน้าลงชื่อใหม่
-            if (currentLevel === 2 && score === 10) {
-                playVideo(STREAMABLE_CODE_VICTORY, () => {
-                    resetToNameScreen();
-                });
-                return;
-            }
-
             resultBox.classList.remove("hide");
             finalPlayerName.innerText = `👤 ${studentName}`;
             finalScoreElement.innerText = `${score} / 10`;
@@ -967,11 +964,15 @@
             restartButton.classList.add("hide");
             level2Button.classList.add("hide");
             retryL2Button.classList.add("hide");
+            victoryVideoBtn.classList.add("hide");
 
             if (score === 10) {
                 if (currentLevel === 1) {
                     feedbackMsg.innerText = "สุดยอดมาก! ผ่าน Level 1 ด้วยคะแนนเต็ม 🏆";
                     level2Button.classList.remove("hide");
+                } else {
+                    feedbackMsg.innerText = "สุดยอด! ผ่าน Level 2 ครบเต็ม 10 ข้อแล้ว! 🎉";
+                    victoryVideoBtn.classList.remove("hide");
                 }
             } else {
                 if (currentLevel === 1) {
@@ -1013,6 +1014,13 @@
             playVideo(STREAMABLE_CODE_LEVEL2, () => {
                 currentLevel = 2;
                 startGame();
+            });
+        });
+
+        victoryVideoBtn.addEventListener("click", () => {
+            resultBox.classList.add("hide");
+            playVideo(STREAMABLE_CODE_VICTORY, () => {
+                resetToNameScreen();
             });
         });
     </script>
