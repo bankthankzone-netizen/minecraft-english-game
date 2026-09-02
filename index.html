@@ -25,7 +25,7 @@
             padding: 15px;
         }
 
-        /* --- 1. หน้า Welcome Screen ก่อนเข้าวิดีโอ --- */
+        /* --- Welcome Screen --- */
         #welcome-screen {
             position: fixed;
             top: 0;
@@ -73,15 +73,10 @@
             transition: transform 0.1s, filter 0.2s;
             box-shadow: 0 6px 0 #b34e00;
         }
-        .launch-btn:hover {
-            filter: brightness(1.1);
-        }
-        .launch-btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #b34e00;
-        }
+        .launch-btn:hover { filter: brightness(1.1); }
+        .launch-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #b34e00; }
 
-        /* --- 2. หน้า Video Intro --- */
+        /* --- Video Intro / Intermission Screen --- */
         #intro-screen {
             position: fixed;
             top: 0;
@@ -98,7 +93,7 @@
             width: 100%;
             height: 100%;
             border: none;
-            pointer-events: none; /* ล็อกไว้ไม่ให้ผู้ใช้กดหยุดหรือปิดเสียงวิดีโอ */
+            pointer-events: none;
         }
         .skip-btn {
             position: absolute;
@@ -117,12 +112,9 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
             pointer-events: auto;
         }
-        .skip-btn:hover {
-            background: #55FF55;
-            color: #000;
-        }
+        .skip-btn:hover { background: #55FF55; color: #000; }
 
-        /* --- 3. หน้าเกมหลัก --- */
+        /* --- Main Quiz Container --- */
         .quiz-container {
             background-color: rgba(43, 43, 43, 0.92);
             border: 6px solid #000;
@@ -143,6 +135,19 @@
             text-shadow: 4px 4px #000;
             margin: 10px 0 20px 0;
             line-height: 1.4;
+        }
+
+        .level-badge {
+            display: inline-block;
+            background: #ff55ff;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px #000;
+            border: 2px solid #fff;
         }
 
         .name-box {
@@ -174,9 +179,7 @@
             margin-bottom: 20px;
             user-select: text;
         }
-        .name-input:focus {
-            border-color: #55FF55;
-        }
+        .name-input:focus { border-color: #55FF55; }
         .start-btn {
             background: #ffb300;
             color: #000;
@@ -191,9 +194,7 @@
             font-family: 'Kanit', sans-serif;
             transition: transform 0.1s;
         }
-        .start-btn:active {
-            transform: scale(0.98);
-        }
+        .start-btn:active { transform: scale(0.98); }
 
         .score-board {
             font-size: 1.3rem;
@@ -210,9 +211,7 @@
             flex-wrap: wrap;
             gap: 10px;
         }
-        .player-display {
-            color: #55FFFF;
-        }
+        .player-display { color: #55FFFF; }
         .question-box {
             background: #1e1e1e;
             border: 4px solid #555;
@@ -241,9 +240,7 @@
             text-align: left;
             line-height: 1.5;
         }
-        .translation-box div {
-            margin-bottom: 4px;
-        }
+        .translation-box div { margin-bottom: 4px; }
         .action-btns {
             display: flex;
             justify-content: center;
@@ -260,22 +257,9 @@
             transition: all 0.1s;
             font-family: 'Kanit', sans-serif;
         }
-        .speak-btn {
-            background: #55FFFF;
-            border: 3px solid #00AAAA;
-            box-shadow: 0 4px 0 #00AAAA;
-        }
-        .translate-btn {
-            background: #FF55FF;
-            border: 3px solid #AA00AA;
-            box-shadow: 0 4px 0 #AA00AA;
-            color: #FFF;
-            text-shadow: 1px 1px #000;
-        }
-        .speak-btn:active, .translate-btn:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0 #000;
-        }
+        .speak-btn { background: #55FFFF; border: 3px solid #00AAAA; box-shadow: 0 4px 0 #00AAAA; }
+        .translate-btn { background: #FF55FF; border: 3px solid #AA00AA; box-shadow: 0 4px 0 #AA00AA; color: #FFF; text-shadow: 1px 1px #000; }
+        .speak-btn:active, .translate-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #000; }
         .btn-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -298,13 +282,8 @@
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             position: relative;
         }
-        .btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            filter: brightness(1.1);
-        }
-        .btn:active:not(:disabled) {
-            transform: translateY(1px);
-        }
+        .btn:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.1); }
+        .btn:active:not(:disabled) { transform: translateY(1px); }
 
         .btn.correct {
             background: #2e7d32 !important;
@@ -322,10 +301,7 @@
             animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
         }
 
-        .btn.dimmed {
-            opacity: 0.45;
-            transform: scale(0.98);
-        }
+        .btn.dimmed { opacity: 0.45; transform: scale(0.98); }
 
         @keyframes pulse-green {
             0% { transform: scale(1); }
@@ -340,7 +316,7 @@
             40%, 60% { transform: translate3d(6px, 0, 0); }
         }
 
-        .next-btn, .restart-btn {
+        .next-btn, .restart-btn, .level2-btn {
             margin-top: 25px;
             background: #ffb300;
             color: #000;
@@ -351,9 +327,11 @@
             text-align: center;
             text-shadow: none;
         }
-        .hide {
-            display: none !important;
+        .level2-btn {
+            background: #00e676;
+            border-color: #b9f6ca #00a152 #00a152 #b9f6ca;
         }
+        .hide { display: none !important; }
         .result-title {
             font-family: 'Press Start 2P', cursive;
             color: #FFFF55;
@@ -381,7 +359,7 @@
 </head>
 <body>
 
-    <!-- 1. หน้าเปิด Welcome Screen -->
+    <!-- 1. Welcome Screen -->
     <div id="welcome-screen">
         <div class="welcome-card">
             <h2>MINECRAFT<br>QUIZ GAME</h2>
@@ -389,21 +367,21 @@
         </div>
     </div>
 
-    <!-- 2. หน้า Video Intro -->
+    <!-- 2. Video Screen (Intro / Victory) -->
     <div id="intro-screen" class="hide">
         <iframe 
             id="intro-video" 
             src="" 
             allow="autoplay; fullscreen; encrypted-media">
         </iframe>
-        <button class="skip-btn" id="skip-btn">ข้ามไปหน้าเกม ➔</button>
+        <button class="skip-btn" id="skip-btn">ข้าม ➔</button>
     </div>
 
-    <!-- 3. Container เกมหลัก -->
+    <!-- 3. Main Quiz Container -->
     <div class="quiz-container">
         <h1>MINECRAFT<br>ENGLISH QUIZ</h1>
         
-        <!-- หน้ากรอกชื่อนักเรียน -->
+        <!-- Name Screen -->
         <div id="name-screen">
             <div class="name-box">
                 <label for="student-name">👤 พิมพ์ชื่อนักเรียนก่อนเริ่มเล่น:</label>
@@ -412,8 +390,9 @@
             </div>
         </div>
 
-        <!-- หน้าคำถาม -->
+        <!-- Question Box -->
         <div id="quiz-box" class="hide">
+            <div id="level-badge" class="level-badge">LEVEL 1</div>
             <div class="score-board">
                 <span class="player-display">👤 ผู้เล่น: <span id="player-name-text">-</span></span>
                 <span>ข้อที่ <span id="current-quest">1</span>/10 | คะแนน: <span id="score">0</span></span>
@@ -438,14 +417,17 @@
             <button id="next-btn" class="btn next-btn hide">ข้อถัดไป ➔</button>
         </div>
 
-        <!-- หน้าสรุปคะแนน -->
+        <!-- Result Box -->
         <div id="result-box" class="hide">
-            <div class="result-title">GAME OVER!</div>
+            <div class="result-title" id="result-title-text">GAME OVER!</div>
             <div class="player-result-name" id="final-player-name">นักเรียน</div>
             <p style="font-size: 1.6rem; margin: 10px 0 0 0;">ทำคะแนนได้ทั้งหมด</p>
             <div class="result-score" id="final-score">0 / 10</div>
             <div id="feedback-msg" class="feedback"></div>
-            <button id="restart-btn" class="btn restart-btn">นักเรียนคนถัดไป 🔄</button>
+            
+            <!-- Dynamic Action Buttons -->
+            <button id="restart-btn" class="btn restart-btn hide">นักเรียนคนถัดไป 🔄</button>
+            <button id="level2-btn" class="btn level2-btn hide">ด่านถัดไป (Level 2) ➔</button>
         </div>
     </div>
 
@@ -456,27 +438,35 @@
         const introVideo = document.getElementById("intro-video");
         const skipBtn = document.getElementById("skip-btn");
         let autoCloseTimer;
+        let activeVideoCallback = null;
 
-        // เมื่อกดปุ่ม "เริ่มเล่นเกม" ในหน้าเปิด ให้เล่นวิดีโอแบบเปิดเสียงทันที
-        launchBtn.addEventListener("click", () => {
+        function playVideo(videoUrl, durationMs, onEndCallback) {
             welcomeScreen.classList.add("hide");
             introScreen.classList.remove("hide");
-            
-            // โหลดและสั่งเล่นวิดีโอพร้อมเสียง (muted=0)
-            introVideo.src = "https://streamable.com/e/5kuk8m?autoplay=1&muted=0";
-            
-            autoCloseTimer = setTimeout(closeIntro, 18500);
-        });
+            introVideo.src = videoUrl;
+            activeVideoCallback = onEndCallback;
+            clearTimeout(autoCloseTimer);
+            autoCloseTimer = setTimeout(closeIntro, durationMs);
+        }
 
         function closeIntro() {
             clearTimeout(autoCloseTimer);
             introScreen.classList.add("hide");
             introVideo.src = "";
+            if (activeVideoCallback) {
+                const cb = activeVideoCallback;
+                activeVideoCallback = null;
+                cb();
+            }
         }
+
+        launchBtn.addEventListener("click", () => {
+            playVideo("https://streamable.com/e/5kuk8m?autoplay=1&muted=0", 18500, () => {});
+        });
 
         skipBtn.addEventListener("click", closeIntro);
 
-        // ระบบ Audio Context สำหรับเสียงตอบถูก/ผิด
+        // Sound Effects (Web Audio API)
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         function playCorrectSound() {
@@ -523,7 +513,8 @@
 
         function speakQuestion() {
             window.speechSynthesis.cancel();
-            const rawText = questions[currentQuestionIndex].question;
+            const currentQuestions = currentLevel === 1 ? questionsL1 : questionsL2;
+            const rawText = currentQuestions[currentQuestionIndex].question;
             const textToSpeak = rawText.replace(/^[0-9]+\.\s*/, ''); 
             
             const utterance = new SpeechSynthesisUtterance(textToSpeak);
@@ -532,7 +523,8 @@
             window.speechSynthesis.speak(utterance);
         }
 
-        const questions = [
+        // --- LEVEL 1 QUESTIONS ---
+        const questionsL1 = [
             { 
                 question: "1. What color is a Creeper?", 
                 translation: "คีปเปอร์มีสีอะไร?", 
@@ -605,6 +597,81 @@
             }
         ];
 
+        // --- LEVEL 2 QUESTIONS (10 ข้อใหม่) ---
+        const questionsL2 = [
+            {
+                question: "1. What item do you use to craft a Torch?",
+                translation: "คุณใช้อะไรในการคราฟต์คบเพลิง (Torch)?",
+                answers: ["A) Stick and Coal", "B) Wood and Iron", "C) Stone and Gold", "D) String and Feather"],
+                answersTranslation: ["A) ไม้แท่งและถ่าน", "B) ไม้และเหล็ก", "C) หินและทอง", "D) เชือกและขนนก"],
+                correct: 0
+            },
+            {
+                question: "2. Which mob drops Enderman Pearls when defeated?",
+                translation: "มอนสเตอร์ตัวใดดร็อปเอ็นเดอร์พาร์ล (Enderman Pearls) เมื่อถูกกำจัด?",
+                answers: ["A) Skeleton", "B) Creeper", "C) Enderman", "D) Witch"],
+                answersTranslation: ["A) สเกเลตัน", "B) คีปเปอร์", "C) เอ็นเดอร์แมน", "D) แม่มด"],
+                correct: 2
+            },
+            {
+                question: "3. What dimension do you reach by building an Obsidian portal?",
+                translation: "มิติใดที่คุณจะไปถึงเมื่อสร้างประตูจากหินออบซิเดียน?",
+                answers: ["A) The End", "B) The Nether", "C) The Overworld", "D) The Sky"],
+                answersTranslation: ["A) ดิเอ็นด์", "B) เดอะเนเธอร์", "C) ดิโอเวอร์เวิลด์", "D) ท้องฟ้า"],
+                correct: 1
+            },
+            {
+                question: "4. What block is used to smelt ores and cook food?",
+                translation: "บล็อกใดที่ใช้ในการเผาแร่และปรุงอาหาร?",
+                answers: ["A) Chest", "B) Crafting Table", "C) Furnace", "D) Anvil"],
+                answersTranslation: ["A) หีบสมบัติ", "B) โต๊ะคราฟต์", "C) เตาเผา", "D) ทั่งตีเหล็ก"],
+                correct: 2
+            },
+            {
+                question: "5. Which creature explodes when it gets close to you?",
+                translation: "สิ่งมีชีวิตใดจะระเบิดเมื่อมันเข้าใกล้คุณ?",
+                answers: ["A) Zombie", "B) Creeper", "C) Spider", "D) Phantom"],
+                answersTranslation: ["A) ซอมบี้", "B) คีปเปอร์", "C) แมงมุม", "D) แฟนทอม"],
+                correct: 1
+            },
+            {
+                question: "6. What item do you need to tame a Wolf?",
+                translation: "ไอเทมใดที่คุณต้องใช้เพื่อเชื่องหมาป่า?",
+                answers: ["A) Fish", "B) Bone", "C) Carrot", "D) Wheat"],
+                answersTranslation: ["A) ปลา", "B) กระดูก", "C) แครอท", "D) ข้าวสาลี"],
+                correct: 1
+            },
+            {
+                question: "7. Which Ore is required to make Iron Tools?",
+                translation: "แร่ชนิดใดที่จำเป็นสำหรับการทำอุปกรณ์เหล็ก?",
+                answers: ["A) Gold Ore", "B) Iron Ore", "C) Coal Ore", "D) Emerald Ore"],
+                answersTranslation: ["A) แร่ทอง", "B) แร่เหล็ก", "C) แร่ถ่าน", "D) แร่มรกต"],
+                correct: 1
+            },
+            {
+                question: "8. What mob flies in the sky if you do not sleep for days?",
+                translation: "มอนสเตอร์ตัวใดจะบินบนฟ้าถ้าคุณไม่นอนหลายวัน?",
+                answers: ["A) Bat", "B) Ghast", "C) Phantom", "D) Blaze"],
+                answersTranslation: ["A) ค้างคาว", "B) แกสต์", "C) แฟนทอม", "D) เบลซ"],
+                correct: 2
+            },
+            {
+                question: "9. What material is needed to craft a Diamond Sword?",
+                translation: "ต้องใช้วัสดุใดบ้างในการคราฟต์ดาบเพชร?",
+                answers: ["A) 2 Diamonds + 1 Stick", "B) 3 Diamonds + 2 Sticks", "C) 1 Diamond + 2 Sticks", "D) 2 Diamonds + 2 Sticks"],
+                answersTranslation: ["A) เพชร 2 เม็ด + ไม้แท่ง 1 อัน", "B) เพชร 3 เม็ด + ไม้แท่ง 2 อัน", "C) เพชร 1 เม็ด + ไม้แท่ง 2 อัน", "D) เพชร 2 เม็ด + ไม้แท่ง 2 อัน"],
+                correct: 0
+            },
+            {
+                question: "10. Who is the ultimate boss dragon found in The End?",
+                translation: "มังกรที่เป็นบอสใหญ่ในมิติ The End มีชื่อว่าอะไร?",
+                answers: ["A) Nether Dragon", "B) Ender Dragon", "C) Red Dragon", "D) Zombie Dragon"],
+                answersTranslation: ["A) เนเธอร์ดรากอน", "B) เอนเดอร์ดรากอน", "C) เรดดรากอน", "D) ซอมบี้ดรากอน"],
+                correct: 1
+            }
+        ];
+
+        let currentLevel = 1;
         let currentQuestionIndex = 0;
         let score = 0;
         let studentName = "";
@@ -614,6 +681,7 @@
         const startGameBtn = document.getElementById("start-game-btn");
         const playerNameText = document.getElementById("player-name-text");
         const finalPlayerName = document.getElementById("final-player-name");
+        const levelBadge = document.getElementById("level-badge");
 
         const questionElement = document.getElementById("question");
         const answerButtonsElement = document.getElementById("answer-buttons");
@@ -628,6 +696,7 @@
         const finalScoreElement = document.getElementById("final-score");
         const feedbackMsg = document.getElementById("feedback-msg");
         const restartButton = document.getElementById("restart-btn");
+        const level2Button = document.getElementById("level2-btn");
 
         startGameBtn.addEventListener("click", () => {
             const enteredName = studentNameInput.value.trim();
@@ -638,6 +707,7 @@
             studentName = enteredName;
             playerNameText.innerText = studentName;
             nameScreen.classList.add("hide");
+            currentLevel = 1;
             startGame();
         });
 
@@ -645,6 +715,7 @@
             currentQuestionIndex = 0;
             score = 0;
             scoreElement.innerText = score;
+            levelBadge.innerText = `LEVEL ${currentLevel}`;
             quizBox.classList.remove("hide");
             resultBox.classList.add("hide");
             showQuestion();
@@ -652,7 +723,9 @@
 
         function showQuestion() {
             resetState();
-            let currentQuestion = questions[currentQuestionIndex];
+            const activeQuestions = currentLevel === 1 ? questionsL1 : questionsL2;
+            let currentQuestion = activeQuestions[currentQuestionIndex];
+            
             currentQuestElement.innerText = currentQuestionIndex + 1;
             questionElement.innerText = currentQuestion.question;
 
@@ -712,7 +785,9 @@
                 button.disabled = true;
             });
 
-            if (questions.length > currentQuestionIndex + 1) {
+            const activeQuestions = currentLevel === 1 ? questionsL1 : questionsL2;
+
+            if (activeQuestions.length > currentQuestionIndex + 1) {
                 setTimeout(() => {
                     nextButton.classList.remove("hide");
                 }, 400);
@@ -725,21 +800,30 @@
             quizBox.classList.add("hide");
             resultBox.classList.remove("hide");
             finalPlayerName.innerText = `👤 ${studentName}`;
-            finalScoreElement.innerText = `${score} / ${questions.length}`;
-            
+            finalScoreElement.innerText = `${score} / 10`;
+
+            restartButton.classList.add("hide");
+            level2Button.classList.add("hide");
+
             if (score === 10) {
-                feedbackMsg.innerText = "เก่งมาก! ตอบถูกหมดทุกข้อเลย 🏆";
-            } else if (score >= 7) {
-                feedbackMsg.innerText = "ยอดเยี่ยมมาก! คุณรู้จัก Minecraft ดีมาก 👍";
-            } else if (score >= 5) {
-                feedbackMsg.innerText = "ผ่านแล้ว! ลองเล่นอีกรอบให้ได้เต็มดูนะ 😃";
+                if (currentLevel === 1) {
+                    feedbackMsg.innerText = "สุดยอดมาก! ผ่าน Level 1 ด้วยคะแนนเต็ม 🏆";
+                    level2Button.classList.remove("hide");
+                } else {
+                    feedbackMsg.innerText = "ยอดเยี่ยมที่สุด! คุณผ่านครบทั้ง 2 ด่านแล้ว 👑";
+                    restartButton.innerText = "นักเรียนคนถัดไป 🔄";
+                    restartButton.classList.remove("hide");
+                }
             } else {
-                feedbackMsg.innerText = "พยายามอีกนิด! ลองใหม่อีกครั้งนะ 🎮";
+                feedbackMsg.innerText = `ทำได้ ${score}/10 คะแนน ลองใหม่อีกครั้งนะ! 👍`;
+                restartButton.innerText = "นักเรียนคนถัดไป 🔄";
+                restartButton.classList.remove("hide");
             }
         }
 
         speakButton.addEventListener("click", speakQuestion);
         translateButton.addEventListener("click", toggleTranslation);
+        
         nextButton.addEventListener("click", () => {
             currentQuestionIndex++;
             showQuestion();
@@ -749,6 +833,15 @@
             studentNameInput.value = "";
             resultBox.classList.add("hide");
             nameScreen.classList.remove("hide");
+        });
+
+        // เมื่อกดปุ่มด่านถัดไป ให้เล่นวิดีโอ Victory แล้วเริ่ม Level 2
+        level2Button.addEventListener("click", () => {
+            resultBox.classList.add("hide");
+            playVideo("https://streamable.com/e/ri8s22?autoplay=1&muted=0", 15000, () => {
+                currentLevel = 2;
+                startGame();
+            });
         });
     </script>
 </body>
