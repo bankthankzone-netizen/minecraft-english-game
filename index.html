@@ -232,6 +232,42 @@
             line-height: 1.5;
         }
         .translation-box div { margin-bottom: 4px; }
+        
+        /* --- Vocabulary Box Style --- */
+        .vocab-box {
+            background: #3b2a00;
+            border: 3px solid #ffb300;
+            color: #ffe082;
+            font-size: 1.1rem;
+            font-weight: 700;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-top: 12px;
+            text-align: left;
+            line-height: 1.5;
+        }
+        .vocab-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 6px 10px;
+            border-radius: 6px;
+            margin-top: 6px;
+        }
+        .vocab-speak-btn {
+            background: #ffb300;
+            color: #000;
+            border: 2px solid #b34e00;
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .vocab-speak-btn:active { transform: scale(0.95); }
+
         .action-btns {
             display: flex;
             justify-content: center;
@@ -398,6 +434,8 @@
                     <button class="translate-btn" id="translate-btn">🇹🇭 แปลคำถามและตัวเลือก</button>
                 </div>
                 <div class="translation-box hide" id="translation-box"></div>
+                <!-- Vocabulary Helper Box -->
+                <div class="vocab-box" id="vocab-box"></div>
             </div>
 
             <div class="btn-grid" id="answer-buttons"></div>
@@ -533,151 +571,238 @@
             window.speechSynthesis.speak(utterance);
         }
 
-        // --- LEVEL 1 QUESTIONS ---
+        function speakWord(word) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.8;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // --- LEVEL 1 QUESTIONS (พร้อมคำศัพท์ยาก) ---
         const questionsL1 = [
             { 
                 question: "1. What color is a Creeper?", 
                 translation: "คีปเปอร์มีสีอะไร?", 
                 answers: ["A) Blue", "B) Green", "C) Red", "D) Yellow"], 
                 answersTranslation: ["A) สีน้ำเงิน", "B) สีเขียว", "C) สีแดง", "D) สีเหลือง"],
-                correct: 1 
+                correct: 1,
+                vocab: [
+                    { word: "Color", phonetic: "คัล-เออะ", meaning: "สี" },
+                    { word: "Creeper", phonetic: "ครี-เพอร์", meaning: "มอนสเตอร์ระเบิดตัวเขียวในเกม" }
+                ]
             },
             { 
                 question: "2. Which animal is pink and gives you meat?", 
                 translation: "สัตว์ตัวไหนมีสีชมพูและให้เนื้อ?", 
                 answers: ["A) Pig", "B) Cow", "C) Sheep", "D) Chicken"], 
                 answersTranslation: ["A) หมู", "B) วัว", "C) แกะ", "D) ไก่"],
-                correct: 0 
+                correct: 0,
+                vocab: [
+                    { word: "Animal", phonetic: "แอน-อิม-อัล", meaning: "สัตว์" },
+                    { word: "Meat", phonetic: "มีท", meaning: "เนื้อสัตว์" }
+                ]
             },
             { 
                 question: "3. What tool do you use to mine ores and stone?", 
                 translation: "อุปกรณ์อะไรที่คุณใช้ขุดแร่และหิน?", 
                 answers: ["A) Sword", "B) Axe", "C) Pickaxe", "D) Shovel"], 
                 answersTranslation: ["A) ดาบ", "B) ขวาน", "C) อีเตอร์/ที่ขุดหิน", "D) พลั่ว"],
-                correct: 2 
+                correct: 2,
+                vocab: [
+                    { word: "Tool", phonetic: "ทูล", meaning: "เครื่องมือ, อุปกรณ์" },
+                    { word: "Mine", phonetic: "ไมน์", meaning: "ขุด (แร่/เหมือง)" }
+                ]
             },
             { 
                 question: "4. Where do you sleep to skip the night?", 
                 translation: "คุณนอนที่ไหนเพื่อข้ามเวลากลางคืน?", 
                 answers: ["A) Chair", "B) Bed", "C) Table", "D) Door"], 
                 answersTranslation: ["A) เก้าอี้", "B) เตียงนอน", "C) โต๊ะ", "D) ประตู"],
-                correct: 1 
+                correct: 1,
+                vocab: [
+                    { word: "skip", phonetic: "สคิป", meaning: "ข้าม, ละเว้น" },
+                    { word: "Night", phonetic: "ไนท์", meaning: "เวลากลางคืน" }
+                ]
             },
             { 
                 question: "5. Which animal gives you milk?", 
                 translation: "สัตว์ชนิดใดให้นมแก่คุณ?", 
                 answers: ["A) Pig", "B) Sheep", "C) Cow", "D) Chicken"], 
                 answersTranslation: ["A) หมู", "B) แกะ", "C) วัว", "D) ไก่"],
-                correct: 2 
+                correct: 2,
+                vocab: [
+                    { word: "Give", phonetic: "กิฟ", meaning: "ให้" },
+                    { word: "Milk", phonetic: "มิล์ค", meaning: "นม" }
+                ]
             },
             { 
                 question: "6. What weapon do you use to shoot arrows?", 
                 translation: "อาวุธชนิดใดที่คุณใช้ยิงลูกธนู?", 
                 answers: ["A) Sword", "B) Bow", "C) Shield", "D) Axe"], 
                 answersTranslation: ["A) ดาบ", "B) คันธนู", "C) โล่", "D) ขวาน"],
-                correct: 1 
+                correct: 1,
+                vocab: [
+                    { word: "Weapon", phonetic: "เวพ-ออน", meaning: "อาวุธ" },
+                    { word: "Shoot", phonetic: "ชูท", meaning: "ยิง" }
+                ]
             },
             { 
                 question: "7. Which food can you make with wheat?", 
                 translation: "อาหารชนิดใดที่คุณทำได้จากข้าวสาลี?", 
                 answers: ["A) Apple", "B) Bread", "C) Fish", "D) Carrot"], 
                 answersTranslation: ["A) แอปเปิล", "B) ขนมปัง", "C) ปลา", "D) แครอท"],
-                correct: 1 
+                correct: 1,
+                vocab: [
+                    { word: "wheat", phonetic: "วีท", meaning: "ข้าวสาลี" },
+                    { word: "Food", phonetic: "ฟูด", meaning: "อาหาร" }
+                ]
             },
             { 
                 question: "8. What happens to a Zombie when the sun comes up?", 
                 translation: "เกิดอะไรขึ้นกับซอมบี้เมื่อพระอาทิตย์ขึ้น?", 
                 answers: ["A) It sleeps", "B) It dances", "C) It burns", "D) It swims"], 
                 answersTranslation: ["A) มันนอนหลับ", "B) มันเต้นรำ", "C) มันเผาไหม้", "D) มันว่ายน้ำ"],
-                correct: 2 
+                correct: 2,
+                vocab: [
+                    { word: "Happen", phonetic: "แฮพ-เพน", meaning: "เกิดขึ้น" },
+                    { word: "Sun", phonetic: "ซัน", meaning: "พระอาทิตย์" }
+                ]
             },
             { 
                 question: "9. What color is a Diamond?", 
                 translation: "เพชรมีสีอะไร?", 
                 answers: ["A) Red", "B) Blue", "C) Green", "D) Pink"], 
                 answersTranslation: ["A) สีแดง", "B) สีฟ้า/น้ำเงิน", "C) สีเขียว", "D) สีชมพู"],
-                correct: 1 
+                correct: 1,
+                vocab: [
+                    { word: "Diamond", phonetic: "ได-อา-มอนด์", meaning: "เพชร" }
+                ]
             },
             { 
                 question: "10. How many eyes does a Spider have in Minecraft?", 
                 translation: "แมงมุมในเกม Minecraft มีกี่ตา?", 
                 answers: ["A) 2", "B) 4", "C) 6", "D) 8"], 
                 answersTranslation: ["A) 2 ตา", "B) 4 ตา", "C) 6 ตา", "D) 8 ตา"],
-                correct: 3 
+                correct: 3,
+                vocab: [
+                    { word: "Eye", phonetic: "อาย", meaning: "ตา" },
+                    { word: "Spider", phonetic: "สไพ-เดอร์", meaning: "แมงมุม" }
+                ]
             }
         ];
 
-        // --- LEVEL 2 QUESTIONS (ปรับปรุงคำว่า Monster ในข้อ 2 แล้ว) ---
+        // --- LEVEL 2 QUESTIONS (พร้อมคำศัพท์ยาก) ---
         const questionsL2 = [
             {
                 question: "1. What item do you use to craft a Torch?",
                 translation: "คุณใช้อะไรในการคราฟต์คบเพลิง (Torch)?",
                 answers: ["A) Stick and Coal", "B) Wood and Iron", "C) Stone and Gold", "D) String and Feather"],
                 answersTranslation: ["A) ไม้แท่งและถ่าน", "B) ไม้และเหล็ก", "C) หินและทอง", "D) เชือกและขนนก"],
-                correct: 0
+                correct: 0,
+                vocab: [
+                    { word: "Torch", phonetic: "ทอร์ช", meaning: "คบเพลิง, ไฟฉาย" },
+                    { word: "Craft", phonetic: "คราฟท์", meaning: "ประดิษฐ์, สร้างไอเทม" }
+                ]
             },
             {
                 question: "2. Which monster drops Enderman Pearls when defeated?",
                 translation: "มอนสเตอร์ตัวใดดร็อปเอ็นเดอร์พาร์ล (Enderman Pearls) เมื่อถูกกำจัด?",
                 answers: ["A) Skeleton", "B) Creeper", "C) Enderman", "D) Witch"],
                 answersTranslation: ["A) สเกเลตัน", "B) คีปเปอร์", "C) เอ็นเดอร์แมน", "D) แม่มด"],
-                correct: 2
+                correct: 2,
+                vocab: [
+                    { word: "Monster", phonetic: "มอน-สเตอร์", meaning: "สัตว์ประหลาด, มอนสเตอร์" },
+                    { word: "defeated", phonetic: "ดิ-ฟีท-เอ็ด", meaning: "ถูกพิชิต, ถูกกำจัด" }
+                ]
             },
             {
                 question: "3. What dimension do you reach by building an Obsidian portal?",
                 translation: "มิติใดที่คุณจะไปถึงเมื่อสร้างประตูจากหินออบซิเดียน?",
                 answers: ["A) The End", "B) The Nether", "C) The Overworld", "D) The Sky"],
                 answersTranslation: ["A) ดิเอ็นด์", "B) เดอะเนเธอร์", "C) ดิโอเวอร์เวิลด์", "D) ท้องฟ้า"],
-                correct: 1
+                correct: 1,
+                vocab: [
+                    { word: "dimension", phonetic: "ได-เมน-ชัน", meaning: "มิติ, โลกต่างมิติ" },
+                    { word: "Portal", phonetic: "พอร์-ทัล", meaning: "ประตูวาร์ป" }
+                ]
             },
             {
                 question: "4. What block is used to smelt ores and cook food?",
                 translation: "บล็อกใดที่ใช้ในการเผาแร่และปรุงอาหาร?",
                 answers: ["A) Chest", "B) Crafting Table", "C) Furnace", "D) Anvil"],
                 answersTranslation: ["A) หีบสมบัติ", "B) โต๊ะคราฟต์", "C) เตาเผา", "D) ทั่งตีเหล็ก"],
-                correct: 2
+                correct: 2,
+                vocab: [
+                    { word: "smelt", phonetic: "สเมลท์", meaning: "หลอม, เผาแร่" },
+                    { word: "Furnace", phonetic: "เฟอร์-เนส", meaning: "เตาหลอม/เตาเผา" }
+                ]
             },
             {
                 question: "5. Which creature explodes when it gets close to you?",
                 translation: "สิ่งมีชีวิตใดจะระเบิดเมื่อมันเข้าใกล้คุณ?",
                 answers: ["A) Zombie", "B) Creeper", "C) Spider", "D) Phantom"],
                 answersTranslation: ["A) ซอมบี้", "B) คีปเปอร์", "C) แมงมุม", "D) แฟนทอม"],
-                correct: 1
+                correct: 1,
+                vocab: [
+                    { word: "creature", phonetic: "ครี-เชอร์", meaning: "สิ่งมีชีวิต" },
+                    { word: "explodes", phonetic: "เอ็กซ์-พลอดส์", meaning: "ระเบิด" }
+                ]
             },
             {
                 question: "6. What item do you need to tame a Wolf?",
                 translation: "ไอเทมใดที่คุณต้องใช้เพื่อเชื่องหมาป่า?",
                 answers: ["A) Fish", "B) Bone", "C) Carrot", "D) Wheat"],
                 answersTranslation: ["A) ปลา", "B) กระดูก", "C) แครอท", "D) ข้าวสาลี"],
-                correct: 1
+                correct: 1,
+                vocab: [
+                    { word: "Tame", phonetic: "เทม", meaning: "ทำให้เชื่อง" },
+                    { word: "Bone", phonetic: "โบน", meaning: "กระดูก" }
+                ]
             },
             {
                 question: "7. Which Ore is required to make Iron Tools?",
                 translation: "แร่ชนิดใดที่จำเป็นสำหรับการทำอุปกรณ์เหล็ก?",
                 answers: ["A) Gold Ore", "B) Iron Ore", "C) Coal Ore", "D) Emerald Ore"],
                 answersTranslation: ["A) แร่ทอง", "B) แร่เหล็ก", "C) แร่ถ่าน", "D) แร่มรกต"],
-                correct: 1
+                correct: 1,
+                vocab: [
+                    { word: "required", phonetic: "รี-ควาย-เอิร์ด", meaning: "จำเป็น, ต้องการ" },
+                    { word: "Ore", phonetic: "โอร", meaning: "แร่" }
+                ]
             },
             {
                 question: "8. What mob flies in the sky if you do not sleep for days?",
                 translation: "มอนสเตอร์ตัวใดจะบินบนฟ้าถ้าคุณไม่นอนหลายวัน?",
                 answers: ["A) Bat", "B) Ghast", "C) Phantom", "D) Blaze"],
                 answersTranslation: ["A) ค้างคาว", "B) แกสต์", "C) แฟนทอม", "D) เบลซ"],
-                correct: 2
+                correct: 2,
+                vocab: [
+                    { word: "Fly", phonetic: "ฟลาย", meaning: "บิน" },
+                    { word: "Sleep", phonetic: "สลีป", meaning: "นอนหลับ" }
+                ]
             },
             {
                 question: "9. What material is needed to craft a Diamond Sword?",
                 translation: "ต้องใช้วัสดุใดบ้างในการคราฟต์ดาบเพชร?",
                 answers: ["A) 2 Diamonds + 1 Stick", "B) 3 Diamonds + 2 Sticks", "C) 1 Diamond + 2 Sticks", "D) 2 Diamonds + 2 Sticks"],
                 answersTranslation: ["A) เพชร 2 เม็ด + ไม้แท่ง 1 อัน", "B) เพชร 3 เม็ด + ไม้แท่ง 2 อัน", "C) เพชร 1 เม็ด + ไม้แท่ง 2 อัน", "D) เพชร 2 เม็ด + ไม้แท่ง 2 อัน"],
-                correct: 0
+                correct: 0,
+                vocab: [
+                    { word: "material", phonetic: "มา-ที-เรียล", meaning: "วัสดุ, วัตถุดิบ" },
+                    { word: "Sword", phonetic: "ซอร์ด", meaning: "ดาบ" }
+                ]
             },
             {
                 question: "10. Who is the ultimate boss dragon found in The End?",
                 translation: "มังกรที่เป็นบอสใหญ่ในมิติ The End มีชื่อว่าอะไร?",
                 answers: ["A) Nether Dragon", "B) Ender Dragon", "C) Red Dragon", "D) Zombie Dragon"],
                 answersTranslation: ["A) เนเธอร์ดรากอน", "B) เอนเดอร์ดรากอน", "C) เรดดรากอน", "D) ซอมบี้ดรากอน"],
-                correct: 1
+                correct: 1,
+                vocab: [
+                    { word: "ultimate", phonetic: "อัล-ทิ-เมท", meaning: "ที่สุด, ขั้นสูงสุด, ท้ายสุด" },
+                    { word: "Dragon", phonetic: "ดรา-กอน", meaning: "มังกร" }
+                ]
             }
         ];
 
@@ -698,6 +823,7 @@
         const speakButton = document.getElementById("speak-btn");
         const translateButton = document.getElementById("translate-btn");
         const translationBox = document.getElementById("translation-box");
+        const vocabBox = document.getElementById("vocab-box");
         const currentQuestElement = document.getElementById("current-quest");
         const scoreElement = document.getElementById("score");
         const quizBox = document.getElementById("quiz-box");
@@ -739,12 +865,29 @@
             currentQuestElement.innerText = currentQuestionIndex + 1;
             questionElement.innerText = currentQuestion.question;
 
+            // ตั้งค่ากล่องแปลภาษา
             let translationHTML = `<div><strong>❓ คำถาม:</strong> ${currentQuestion.translation}</div>`;
             translationHTML += `<div style="margin-top:6px;"><strong>ตัวเลือก:</strong></div>`;
             currentQuestion.answersTranslation.forEach(ansTrans => {
                 translationHTML += `<div style="padding-left:10px;">• ${ansTrans}</div>`;
             });
             translationBox.innerHTML = translationHTML;
+
+            // ตั้งค่ากล่องแนะนำคำศัพท์ยาก (Vocabulary Box)
+            let vocabHTML = `<div>📚 <strong>คำศัพท์น่ารู้ในข้อนี้:</strong></div>`;
+            currentQuestion.vocab.forEach(v => {
+                vocabHTML += `
+                    <div class="vocab-item">
+                        <div>
+                            <span style="color: #55FF55; font-size: 1.2rem;">${v.word}</span> 
+                            <span style="color: #aaa; font-size: 0.95rem;">(${v.phonetic})</span> 
+                            <span style="color: #fff;">- ${v.meaning}</span>
+                        </div>
+                        <button class="vocab-speak-btn" onclick="speakWord('${v.word}')">🔊 ฟัง</button>
+                    </div>
+                `;
+            });
+            vocabBox.innerHTML = vocabHTML;
 
             currentQuestion.answers.forEach((answer, index) => {
                 const button = document.createElement("button");
