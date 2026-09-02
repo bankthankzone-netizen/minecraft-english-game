@@ -438,7 +438,7 @@
         const skipBtn = document.getElementById("skip-btn");
         let activeVideoCallback = null;
 
-        // ฟังก์ชันเล่นวิดีโอผสาน HTML5 Video API เพื่อความแม่นยำเมื่อเล่นจบ
+        // ฟังก์ชันเล่นวิดีโอ (แก้ไขเพิ่มเติม atributo เพื่อป้องกัน Autoplay Blocked)
         function playVideoSrc(videoSrc, onEndCallback) {
             welcomeScreen.classList.add("hide");
             introScreen.classList.remove("hide");
@@ -448,14 +448,34 @@
             const videoElement = document.createElement("video");
             videoElement.src = videoSrc;
             videoElement.autoplay = true;
+            videoElement.muted = true; // ป้องกันการบล็อก Autoplay ของ Browser
+            videoElement.setAttribute("playsinline", "true"); // รองรับอุปกรณ์ iOS/มือถือ
             videoElement.controls = false;
             videoElement.style.width = "100%";
             videoElement.style.height = "100%";
             videoElement.style.objectFit = "contain";
 
             videoElement.addEventListener("ended", closeIntro);
+            
+            // เพิ่มระบบป้องกัน กรณีวิดีโอโหลดไม่ได้ หรือโดนบล็อก ให้ข้ามไปทำงานส่วนถัดไปทันที
+            videoElement.addEventListener("error", () => {
+                console.warn("ไม่สามารถโหลดวิดีโอได้ สลับไปขั้นตอนถัดไปอัตโนมัติ");
+                closeIntro();
+            });
+
             videoContainer.appendChild(videoElement);
-            videoElement.play().catch(() => {});
+
+            // คำสั่งบังคับเล่นวิดีโอ
+            const playPromise = videoElement.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    // เมื่อเริ่มเล่นได้แล้ว ค่อยปลดเสียง Mute ออก
+                    videoElement.muted = false;
+                }).catch(error => {
+                    console.log("Autoplay with sound failed, playing muted fallback:", error);
+                    videoElement.play().catch(() => closeIntro());
+                });
+            }
         }
 
         function closeIntro() {
