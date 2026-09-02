@@ -223,12 +223,12 @@
 </head>
 <body>
 
-    <!-- หน้าจอ Video Intro จาก Streamable เปิดเสียง + ตัดเข้าเกมเอง -->
+    <!-- หน้าจอ Video Intro จาก Streamable เปิดเสียงทันที -->
     <div id="intro-screen">
         <iframe 
             id="intro-video" 
             src="https://streamable.com/e/5kuk8m?autoplay=1&muted=0" 
-            allow="autoplay; fullscreen">
+            allow="autoplay; fullscreen; encrypted-media">
         </iframe>
         <button class="skip-btn" id="skip-btn">ข้ามไปหน้าเกม ➔</button>
     </div>
@@ -271,17 +271,20 @@
     </div>
 
     <script>
-        // ระบบซ่อน/ข้าม Video Intro และตั้งเวลาปิดวิดีโออัตโนมัติ
+        // ระบบซ่อน Video Intro และหยุดเล่นเสียงทันทีเมื่อตัดเข้าเกม
         const introScreen = document.getElementById("intro-screen");
+        const introVideo = document.getElementById("intro-video");
         const skipBtn = document.getElementById("skip-btn");
         let autoCloseTimer;
 
         function closeIntro() {
             clearTimeout(autoCloseTimer);
             introScreen.classList.add("hide");
+            // หยุดการเล่นวิดีโอและตัดเสียงทันทีโดยการล้าง src
+            introVideo.src = "";
         }
 
-        // กำหนดเวลา 18 วินาที (18000 ms) สำหรับตัดเข้าหน้าเกมอัตโนมัติ
+        // ตัดเข้าเกมและหยุดเสียงวิดีโออัตโนมัติเมื่อครบ 18 วินาที (18000 ms)
         autoCloseTimer = setTimeout(closeIntro, 18000);
 
         skipBtn.addEventListener("click", closeIntro);
