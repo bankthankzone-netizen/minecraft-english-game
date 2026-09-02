@@ -3,111 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minecraft English Quiz</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+    <title>Minecraft English Quiz for Kids</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
             user-select: none;
         }
         body {
-            background-color: #5b8731;
+            background-color: #4a6f28;
             background-image: 
-                radial-gradient(#74a33e 15%, transparent 16%),
-                radial-gradient(#4a6f28 15%, transparent 16%);
-            background-size: 60px 60px;
-            background-position: 0 0, 30px 30px;
+                radial-gradient(#74a33e 20%, transparent 20%),
+                radial-gradient(#5b8731 20%, transparent 20%);
+            background-size: 80px 80px;
+            background-position: 0 0, 40px 40px;
             font-family: 'Kanit', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
         }
         .quiz-container {
-            background-color: #313131;
-            border: 4px solid #000;
-            outline: 4px solid #737373;
-            box-shadow: 0 10px 0 #000;
-            padding: 25px;
+            background-color: #2b2b2b;
+            border: 6px solid #000;
+            outline: 6px solid #737373;
+            box-shadow: 0 12px 0 #000;
+            padding: 25px 20px;
             width: 100%;
-            max-width: 550px;
+            max-width: 680px;
             text-align: center;
             color: #fff;
-            border-radius: 2px;
+            border-radius: 8px;
         }
         h1 {
             font-family: 'Press Start 2P', cursive;
             color: #55FF55;
-            font-size: 1.2rem;
-            text-shadow: 3px 3px #000;
-            margin-bottom: 20px;
-            line-height: 1.5;
+            font-size: 1.6rem;
+            text-shadow: 4px 4px #000;
+            margin: 10px 0 20px 0;
+            line-height: 1.4;
         }
         .score-board {
-            font-family: 'Press Start 2P', cursive;
-            background: #202020;
-            padding: 10px;
-            border: 2px solid #555;
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: #111;
+            padding: 12px;
+            border: 3px solid #555;
             color: #FFFF55;
-            font-size: 0.8rem;
             margin-bottom: 20px;
+            border-radius: 6px;
         }
         .question-box {
-            background: #2c2c2c;
-            border: 2px solid #555;
-            padding: 20px;
+            background: #1e1e1e;
+            border: 4px solid #555;
+            padding: 25px 20px;
             margin-bottom: 20px;
-            border-radius: 4px;
+            border-radius: 8px;
         }
         .question-text {
-            font-size: 1.3rem;
-            font-weight: bold;
+            font-size: 1.8rem;
+            font-weight: 800;
             color: #FFF;
-            margin-bottom: 10px;
+            line-height: 1.4;
+            letter-spacing: 0.5px;
         }
         .btn-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 12px;
+            gap: 15px;
         }
         .btn {
-            background: #8B8B8B;
-            border: 4px solid;
+            background: #727272;
+            border: 5px solid;
             border-color: #FFF #373737 #373737 #FFF;
             color: #FFF;
-            padding: 12px;
-            font-size: 1.1rem;
+            padding: 18px 15px;
+            font-size: 1.6rem;
+            font-weight: 700;
             font-family: 'Kanit', sans-serif;
             cursor: pointer;
             text-shadow: 2px 2px #000;
-            transition: all 0.1s;
-        }
-        .btn:hover {
-            background: #A8A8A8;
+            border-radius: 6px;
+            text-align: left;
+            transition: transform 0.1s;
         }
         .btn:active {
-            border-color: #373737 #FFF #FFF #373737;
+            transform: scale(0.98);
         }
         .btn.correct {
-            background: #55FF55 !important;
-            color: #000 !important;
-            text-shadow: none !important;
-            border-color: #AAFFAA #00AA00 #00AA00 #AAFFAA !important;
+            background: #2e7d32 !important;
+            color: #FFF !important;
+            border-color: #81c784 #1b5e20 #1b5e20 #81c784 !important;
         }
         .btn.wrong {
-            background: #FF5555 !important;
+            background: #c62828 !important;
             color: #FFF !important;
-            border-color: #FFAAAA #AA0000 #AA0000 #FFAAAA !important;
+            border-color: #ef9a9a #b71c1c #b71c1c #ef9a9a !important;
         }
         .next-btn, .restart-btn {
-            margin-top: 20px;
-            background: #55FF55;
+            margin-top: 25px;
+            background: #ffb300;
             color: #000;
-            border-color: #AAFFAA #00AA00 #00AA00 #AAFFAA;
-            font-weight: bold;
+            border-color: #ffe082 #ff6f00 #ff6f00 #ffe082;
+            font-size: 1.8rem;
+            font-weight: 800;
             width: 100%;
+            text-align: center;
+            text-shadow: none;
         }
         .hide {
             display: none;
@@ -115,7 +119,20 @@
         .result-title {
             font-family: 'Press Start 2P', cursive;
             color: #FFFF55;
-            margin-bottom: 15px;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        .result-score {
+            font-size: 4rem;
+            color: #55FF55;
+            font-weight: 800;
+            margin: 15px 0;
+            text-shadow: 3px 3px #000;
+        }
+        .feedback {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 25px;
         }
     </style>
 </head>
@@ -126,7 +143,7 @@
         
         <div id="quiz-box">
             <div class="score-board">
-                QUESTION <span id="current-quest">1</span>/10 | SCORE: <span id="score">0</span>
+                ข้อที่ <span id="current-quest">1</span>/10 | คะแนน: <span id="score">0</span>
             </div>
 
             <div class="question-box">
@@ -140,15 +157,15 @@
                 <button class="btn">Option 4</button>
             </div>
 
-            <button id="next-btn" class="btn next-btn hide">NEXT ➔</button>
+            <button id="next-btn" class="btn next-btn hide">ข้อถัดไป ➔</button>
         </div>
 
         <div id="result-box" class="hide">
-            <h2 class="result-title">GAME OVER!</h2>
-            <p style="font-size: 1.5rem;">คุณได้คะแนนทั้งหมด</p>
-            <p style="font-size: 3rem; color: #55FF55; font-weight: bold; margin: 10px 0;" id="final-score">0 / 10</p>
-            <p id="feedback-msg" style="font-size: 1.2rem; margin-bottom: 20px;"></p>
-            <button id="restart-btn" class="btn restart-btn">PLAY AGAIN 🔄</button>
+            <div class="result-title">GAME OVER!</div>
+            <p style="font-size: 1.8rem; margin: 0;">คุณได้คะแนนทั้งหมด</p>
+            <div class="result-score" id="final-score">0 / 10</div>
+            <div id="feedback-msg" class="feedback"></div>
+            <button id="restart-btn" class="btn restart-btn">เล่นใหม่อีกครั้ง 🔄</button>
         </div>
     </div>
 
