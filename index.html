@@ -281,8 +281,8 @@
             introScreen.classList.add("hide");
         }
 
-        // กำหนดความยาวคลิป Streamable เพื่อปิดอัตโนมัติเมื่อเล่นจบ (ตั้งไว้ 12 วินาที)
-        autoCloseTimer = setTimeout(closeIntro, 12000);
+        // กำหนดเวลา 18 วินาที (18000 ms) สำหรับตัดเข้าหน้าเกมอัตโนมัติ
+        autoCloseTimer = setTimeout(closeIntro, 18000);
 
         skipBtn.addEventListener("click", closeIntro);
 
