@@ -58,9 +58,10 @@
         .question-box {
             background: #1e1e1e;
             border: 4px solid #555;
-            padding: 25px 20px;
+            padding: 20px;
             margin-bottom: 20px;
             border-radius: 8px;
+            position: relative;
         }
         .question-text {
             font-size: 1.8rem;
@@ -68,6 +69,23 @@
             color: #FFF;
             line-height: 1.4;
             letter-spacing: 0.5px;
+            margin-bottom: 15px;
+        }
+        .speak-btn {
+            background: #55FFFF;
+            color: #000;
+            border: 3px solid #00AAAA;
+            font-size: 1.3rem;
+            font-weight: 800;
+            padding: 8px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #00AAAA;
+            transition: all 0.1s;
+        }
+        .speak-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #00AAAA;
         }
         .btn-grid {
             display: grid;
@@ -148,6 +166,7 @@
 
             <div class="question-box">
                 <div class="question-text" id="question">Question text here</div>
+                <button class="speak-btn" id="speak-btn">🔊 ฟังเสียงอ่าน</button>
             </div>
 
             <div class="btn-grid" id="answer-buttons">
@@ -170,17 +189,12 @@
     </div>
 
     <script>
-        // สร้างระบบสังเคราะห์เสียง Web Audio API
+        // Web Audio API สำหรับเสียงตอบถูก/ตอบผิด
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-        // เสียงตอบถูก (ปิ๊งป่อง 2 ตัวโน้ต)
         function playCorrectSound() {
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (audioCtx.state === 'suspended') audioCtx.resume();
             const now = audioCtx.currentTime;
-            
-            // โน้ตที่ 1 (E5)
             const osc1 = audioCtx.createOscillator();
             const gain1 = audioCtx.createGain();
             osc1.type = 'triangle';
@@ -192,7 +206,6 @@
             osc1.start(now);
             osc1.stop(now + 0.15);
 
-            // โน้ตที่ 2 (G5)
             const osc2 = audioCtx.createOscillator();
             const gain2 = audioCtx.createGain();
             osc2.type = 'triangle';
@@ -205,26 +218,33 @@
             osc2.stop(now + 0.35);
         }
 
-        // เสียงตอบผิด (ตึ๊ดดด เสียงความถี่ต่ำ)
         function playWrongSound() {
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (audioCtx.state === 'suspended') audioCtx.resume();
             const now = audioCtx.currentTime;
-            
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.type = 'sawtooth';
             osc.frequency.setValueAtTime(160, now);
             osc.frequency.exponentialRampToValueAtTime(80, now + 0.3);
-            
             gain.gain.setValueAtTime(0.3, now);
             gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-            
             osc.connect(gain);
             gain.connect(audioCtx.destination);
             osc.start(now);
             osc.stop(now + 0.3);
+        }
+
+        // ระบบอ่านออกเสียงคำถาม (Speech Synthesis)
+        function speakQuestion() {
+            window.speechSynthesis.cancel(); // หยุดเสียงเก่าก่อนถ้ามี
+            const rawText = questions[currentQuestionIndex].question;
+            // ตัดตัวเลขข้อด้านหน้าออกให้อ่านเฉพาะประโยคคำถาม
+            const textToSpeak = rawText.replace(/^[0-9]+\.\s*/, ''); 
+            
+            const utterance = new SpeechSynthesisUtterance(textToSpeak);
+            utterance.lang = 'en-US'; // สำเนียงภาษาอังกฤษ
+            utterance.rate = 0.85;    // ชะลอความเร็วการพูดเล็กน้อยเพื่อให้เด็กฟังทัน
+            window.speechSynthesis.speak(utterance);
         }
 
         const questions = [
@@ -246,6 +266,7 @@
         const questionElement = document.getElementById("question");
         const answerButtonsElement = document.getElementById("answer-buttons");
         const nextButton = document.getElementById("next-btn");
+        const speakButton = document.getElementById("speak-btn");
         const currentQuestElement = document.getElementById("current-quest");
         const scoreElement = document.getElementById("score");
         const quizBox = document.getElementById("quiz-box");
@@ -282,6 +303,7 @@
         }
 
         function resetState() {
+            window.speechSynthesis.cancel();
             nextButton.classList.add("hide");
             while (answerButtonsElement.firstChild) {
                 answerButtonsElement.removeChild(answerButtonsElement.firstChild);
@@ -289,17 +311,18 @@
         }
 
         function selectAnswer(e) {
+            window.speechSynthesis.cancel();
             const selectedButton = e.target;
             const isCorrect = selectedButton.dataset.correct === "true";
 
             if (isCorrect) {
                 selectedButton.classList.add("correct");
-                playCorrectSound(); // เล่นเสียงตอบถูก
+                playCorrectSound();
                 score++;
                 scoreElement.innerText = score;
             } else {
                 selectedButton.classList.add("wrong");
-                playWrongSound(); // เล่นเสียงตอบผิด
+                playWrongSound();
             }
 
             Array.from(answerButtonsElement.children).forEach(button => {
@@ -332,11 +355,11 @@
             }
         }
 
+        speakButton.addEventListener("click", speakQuestion);
         nextButton.addEventListener("click", () => {
             currentQuestionIndex++;
             showQuestion();
         });
-
         restartButton.addEventListener("click", startGame);
 
         startGame();
