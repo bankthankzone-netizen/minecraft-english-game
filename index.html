@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minecraft English Quiz for Kids</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <!-- ดึง Streamable Player SDK เพื่อให้ดักจับเหตุการณ์วิดีโอจบได้อย่างแม่นยำ -->
+    <script src="https://cdn.embed.ly/player-0.1.0.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -76,7 +78,7 @@
         .launch-btn:hover { filter: brightness(1.1); }
         .launch-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #b34e00; }
 
-        /* --- 2. Video Screen (อยู่ระหว่างหน้าแรกกับหน้าลงชื่อ) --- */
+        /* --- 2. Video Screen --- */
         #intro-screen {
             position: fixed;
             top: 0;
@@ -93,6 +95,11 @@
             width: 100%;
             height: 100%;
             position: relative;
+        }
+        #video-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
         }
         .skip-btn {
             position: absolute;
@@ -374,7 +381,7 @@
         </div>
     </div>
 
-    <!-- 2. Video Screen (เล่นวิดีโอคั่นระหว่างหน้าแรกและหน้าลงชื่อ) -->
+    <!-- 2. Video Screen -->
     <div id="intro-screen" class="hide">
         <div id="video-container"></div>
         <button class="skip-btn" id="skip-btn">ข้าม ➔</button>
@@ -439,41 +446,35 @@
         const nameScreen = document.getElementById("name-screen");
         let activeVideoCallback = null;
 
-        // ลิงก์ Direct MP4
-        const VIDEO_INTRO = "https://cdn-cf-east.streamable.com/video/mp4/5kuk8m.mp4";
-        const VIDEO_LEVEL2 = "https://cdn-cf-east.streamable.com/video/mp4/ri8s22.mp4";
+        // รหัสวิดีโอจาก Streamable
+        const STREAMABLE_CODE_INTRO = "5kuk8m";
+        const STREAMABLE_CODE_LEVEL2 = "ri8s22";
 
-        function playVideoSrc(videoSrc, onEndCallback) {
+        function playStreamableVideo(videoCode, onEndCallback) {
             welcomeScreen.classList.add("hide");
             introScreen.classList.remove("hide");
             activeVideoCallback = onEndCallback;
             videoContainer.innerHTML = "";
 
-            const videoElement = document.createElement("video");
-            videoElement.src = videoSrc;
-            videoElement.autoplay = true;
-            videoElement.playsInline = true;
-            videoElement.muted = false; // ปิด Mute เพื่อให้มีเสียงทันทีหลังผู้เล่นกดปุ่ม
-            videoElement.controls = false;
-            videoElement.style.width = "100%";
-            videoElement.style.height = "100%";
-            videoElement.style.objectFit = "contain";
+            // โหลดผ่าน iframe embed ของ Streamable พร้อมตั้งค่าเล่นอัตโนมัติและมีเสียง
+            const iframe = document.createElement("iframe");
+            iframe.src = `https://streamable.com/e/${videoCode}?autoplay=1&nocontrols=1`;
+            iframe.allow = "autoplay; fullscreen";
+            iframe.style.width = "100%";
+            iframe.style.height = "100%";
+            iframe.style.border = "none";
 
-            videoElement.addEventListener("ended", closeIntro);
-            
-            videoElement.addEventListener("error", () => {
-                console.warn("วิดีโอมีปัญหา ข้ามไปส่วนถัดไปอัตโนมัติ");
-                closeIntro();
-            });
+            videoContainer.appendChild(iframe);
 
-            videoContainer.appendChild(videoElement);
-
-            const playPromise = videoElement.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.warn("Autoplay โดนบล็อก ลองเปิดเสียงหลังจากได้รับ Interaction:", error);
-                    videoElement.muted = true;
-                    videoElement.play().catch(() => closeIntro());
+            // ใช้ Embedly API ตรวจจับว่าวิดีโอเล่นจบแล้วหรือยัง
+            if (window.playerjs) {
+                const player = new playerjs.Player(iframe);
+                player.on('ready', () => {
+                    player.unmute();
+                    player.play();
+                });
+                player.on('ended', () => {
+                    closeIntro();
                 });
             }
         }
@@ -488,9 +489,9 @@
             }
         }
 
-        // เมื่อกด "เริ่มเล่นเกม 🎮" จากหน้าแรก -> เล่นวิดีโอ 5kuk8m มีเสียง -> เล่นจบเปิดหน้าลงชื่อทันที
+        // เมื่อกดเริ่มเกม -> เล่นวิดีโอ Streamable (5kuk8m) ชนิดมีเสียง พอจบจะตัดไปหน้าลงชื่อ
         launchBtn.addEventListener("click", () => {
-            playVideoSrc(VIDEO_INTRO, () => {
+            playStreamableVideo(STREAMABLE_CODE_INTRO, () => {
                 nameScreen.classList.remove("hide");
             });
         });
@@ -881,7 +882,7 @@
 
         level2Button.addEventListener("click", () => {
             resultBox.classList.add("hide");
-            playVideoSrc(VIDEO_LEVEL2, () => {
+            playStreamableVideo(STREAMABLE_CODE_LEVEL2, () => {
                 currentLevel = 2;
                 startGame();
             });
