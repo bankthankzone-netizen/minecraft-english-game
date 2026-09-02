@@ -11,7 +11,6 @@
             user-select: none;
         }
         body {
-            /* ตั้งค่ารูปภาพพื้นหลัง Minecraft */
             background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://i.postimg.cc/c4PVz0FK/i-tried-recreating-that-one-minecraft-wallpaper-that-was-v0-5uuduk40yno71.webp');
             background-size: cover;
             background-position: center;
@@ -87,8 +86,56 @@
             margin: 10px 0 20px 0;
             line-height: 1.4;
         }
-        .score-board {
+
+        /* --- หน้ากรอกชื่อนักเรียน --- */
+        .name-box {
+            background: #1e1e1e;
+            border: 4px solid #555;
+            padding: 25px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .name-box label {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #FFFF55;
+            display: block;
+            margin-bottom: 15px;
+        }
+        .name-input {
+            width: 100%;
+            padding: 15px;
             font-size: 1.4rem;
+            font-family: 'Kanit', sans-serif;
+            font-weight: 700;
+            border: 4px solid #555;
+            border-radius: 6px;
+            background: #111;
+            color: #55FF55;
+            text-align: center;
+            outline: none;
+            margin-bottom: 20px;
+            user-select: text;
+        }
+        .name-input:focus {
+            border-color: #55FF55;
+        }
+        .start-btn {
+            background: #ffb300;
+            color: #000;
+            border: 5px solid;
+            border-color: #ffe082 #ff6f00 #ff6f00 #ffe082;
+            font-size: 1.6rem;
+            font-weight: 800;
+            width: 100%;
+            padding: 15px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        .score-board {
+            font-size: 1.3rem;
             font-weight: 700;
             background: #111;
             padding: 12px;
@@ -96,6 +143,14 @@
             color: #FFFF55;
             margin-bottom: 20px;
             border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .player-display {
+            color: #55FFFF;
         }
         .question-box {
             background: #1e1e1e;
@@ -209,7 +264,7 @@
             margin-bottom: 20px;
         }
         .result-score {
-            font-size: 4rem;
+            font-size: 3.5rem;
             color: #55FF55;
             font-weight: 800;
             margin: 15px 0;
@@ -219,6 +274,11 @@
             font-size: 1.8rem;
             font-weight: 700;
             margin-bottom: 25px;
+        }
+        .player-result-name {
+            font-size: 2rem;
+            color: #55FFFF;
+            font-weight: 800;
         }
     </style>
 </head>
@@ -238,9 +298,20 @@
     <div class="quiz-container">
         <h1>MINECRAFT<br>ENGLISH QUIZ</h1>
         
-        <div id="quiz-box">
+        <!-- หน้ากรอกชื่อนักเรียน -->
+        <div id="name-screen">
+            <div class="name-box">
+                <label for="student-name">👤 พิมพ์ชื่อนักเรียนก่อนเริ่มเล่น:</label>
+                <input type="text" id="student-name" class="name-input" placeholder="กรอกชื่อ-นามสกุล หรือชื่อเล่น..." autocomplete="off">
+                <button class="start-btn" id="start-game-btn">เริ่มทำแบบทดสอบ 🎮</button>
+            </div>
+        </div>
+
+        <!-- หน้าคำถาม -->
+        <div id="quiz-box" class="hide">
             <div class="score-board">
-                ข้อที่ <span id="current-quest">1</span>/10 | คะแนน: <span id="score">0</span>
+                <span class="player-display">👤 ผู้เล่น: <span id="player-name-text">-</span></span>
+                <span>ข้อที่ <span id="current-quest">1</span>/10 | คะแนน: <span id="score">0</span></span>
             </div>
 
             <div class="question-box">
@@ -262,12 +333,14 @@
             <button id="next-btn" class="btn next-btn hide">ข้อถัดไป ➔</button>
         </div>
 
+        <!-- หน้าสรุปคะแนน -->
         <div id="result-box" class="hide">
             <div class="result-title">GAME OVER!</div>
-            <p style="font-size: 1.8rem; margin: 0;">คุณได้คะแนนทั้งหมด</p>
+            <div class="player-result-name" id="final-player-name">นักเรียน</div>
+            <p style="font-size: 1.6rem; margin: 10px 0 0 0;">ทำคะแนนได้ทั้งหมด</p>
             <div class="result-score" id="final-score">0 / 10</div>
             <div id="feedback-msg" class="feedback"></div>
-            <button id="restart-btn" class="btn restart-btn">เล่นใหม่อีกครั้ง 🔄</button>
+            <button id="restart-btn" class="btn restart-btn">นักเรียนคนถัดไป 🔄</button>
         </div>
     </div>
 
@@ -283,9 +356,7 @@
             introVideo.src = "";
         }
 
-        // ปรับเวลาตั้งปิดอัตโนมัติเป็น 18.5 วินาที (18500 ms)
         autoCloseTimer = setTimeout(closeIntro, 18500);
-
         skipBtn.addEventListener("click", closeIntro);
 
         // ระบบ Audio Context สำหรับเสียงตอบถูก/ผิด
@@ -360,6 +431,13 @@
 
         let currentQuestionIndex = 0;
         let score = 0;
+        let studentName = "";
+
+        const nameScreen = document.getElementById("name-screen");
+        const studentNameInput = document.getElementById("student-name");
+        const startGameBtn = document.getElementById("start-game-btn");
+        const playerNameText = document.getElementById("player-name-text");
+        const finalPlayerName = document.getElementById("final-player-name");
 
         const questionElement = document.getElementById("question");
         const answerButtonsElement = document.getElementById("answer-buttons");
@@ -374,6 +452,19 @@
         const finalScoreElement = document.getElementById("final-score");
         const feedbackMsg = document.getElementById("feedback-msg");
         const restartButton = document.getElementById("restart-btn");
+
+        // ตรวจสอบการกดปุ่มเริ่มเล่นหลังกรอกชื่อ
+        startGameBtn.addEventListener("click", () => {
+            const enteredName = studentNameInput.value.trim();
+            if (enteredName === "") {
+                alert("กรุณากรอกชื่อนักเรียนก่อนเริ่มเล่นครับ!");
+                return;
+            }
+            studentName = enteredName;
+            playerNameText.innerText = studentName;
+            nameScreen.classList.add("hide");
+            startGame();
+        });
 
         function startGame() {
             currentQuestionIndex = 0;
@@ -448,6 +539,7 @@
         function showResult() {
             quizBox.classList.add("hide");
             resultBox.classList.remove("hide");
+            finalPlayerName.innerText = `👤 ${studentName}`;
             finalScoreElement.innerText = `${score} / ${questions.length}`;
             
             if (score === 10) {
@@ -467,9 +559,13 @@
             currentQuestionIndex++;
             showQuestion();
         });
-        restartButton.addEventListener("click", startGame);
 
-        startGame();
+        // เมื่อกดเล่นใหม่อีกครั้ง จะย้อนกลับไปหน้ากรอกชื่อนักเรียนคนถัดไป
+        restartButton.addEventListener("click", () => {
+            studentNameInput.value = "";
+            resultBox.classList.add("hide");
+            nameScreen.classList.remove("hide");
+        });
     </script>
 </body>
 </html>
