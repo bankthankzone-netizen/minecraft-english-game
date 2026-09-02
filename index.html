@@ -71,21 +71,47 @@
             letter-spacing: 0.5px;
             margin-bottom: 15px;
         }
-        .speak-btn {
-            background: #55FFFF;
+        .translation-box {
+            background: #003366;
+            border: 3px solid #55FFFF;
+            color: #55FFFF;
+            font-size: 1.4rem;
+            font-weight: 700;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        .action-btns {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .speak-btn, .translate-btn {
             color: #000;
-            border: 3px solid #00AAAA;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 800;
-            padding: 8px 18px;
+            padding: 8px 16px;
             border-radius: 20px;
             cursor: pointer;
-            box-shadow: 0 4px 0 #00AAAA;
             transition: all 0.1s;
+            font-family: 'Kanit', sans-serif;
         }
-        .speak-btn:active {
+        .speak-btn {
+            background: #55FFFF;
+            border: 3px solid #00AAAA;
+            box-shadow: 0 4px 0 #00AAAA;
+        }
+        .translate-btn {
+            background: #FF55FF;
+            border: 3px solid #AA00AA;
+            box-shadow: 0 4px 0 #AA00AA;
+            color: #FFF;
+            text-shadow: 1px 1px #000;
+        }
+        .speak-btn:active, .translate-btn:active {
             transform: translateY(3px);
-            box-shadow: 0 1px 0 #00AAAA;
+            box-shadow: 0 1px 0 #000;
         }
         .btn-grid {
             display: grid;
@@ -166,7 +192,11 @@
 
             <div class="question-box">
                 <div class="question-text" id="question">Question text here</div>
-                <button class="speak-btn" id="speak-btn">🔊 ฟังเสียงอ่าน</button>
+                <div class="action-btns">
+                    <button class="speak-btn" id="speak-btn">🔊 ฟังเสียงอ่าน</button>
+                    <button class="translate-btn" id="translate-btn">🇹🇭 แปลคำถาม</button>
+                </div>
+                <div class="translation-box hide" id="translation-box"></div>
             </div>
 
             <div class="btn-grid" id="answer-buttons">
@@ -189,7 +219,6 @@
     </div>
 
     <script>
-        // Web Audio API สำหรับเสียงตอบถูก/ตอบผิด
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         function playCorrectSound() {
@@ -234,30 +263,28 @@
             osc.stop(now + 0.3);
         }
 
-        // ระบบอ่านออกเสียงคำถาม (Speech Synthesis)
         function speakQuestion() {
-            window.speechSynthesis.cancel(); // หยุดเสียงเก่าก่อนถ้ามี
+            window.speechSynthesis.cancel();
             const rawText = questions[currentQuestionIndex].question;
-            // ตัดตัวเลขข้อด้านหน้าออกให้อ่านเฉพาะประโยคคำถาม
             const textToSpeak = rawText.replace(/^[0-9]+\.\s*/, ''); 
             
             const utterance = new SpeechSynthesisUtterance(textToSpeak);
-            utterance.lang = 'en-US'; // สำเนียงภาษาอังกฤษ
-            utterance.rate = 0.85;    // ชะลอความเร็วการพูดเล็กน้อยเพื่อให้เด็กฟังทัน
+            utterance.lang = 'en-US';
+            utterance.rate = 0.85;
             window.speechSynthesis.speak(utterance);
         }
 
         const questions = [
-            { question: "1. What color is a Creeper?", answers: ["A) Blue", "B) Green", "C) Red", "D) Yellow"], correct: 1 },
-            { question: "2. Which mob is pink and gives you meat?", answers: ["A) Pig", "B) Cow", "C) Sheep", "D) Chicken"], correct: 0 },
-            { question: "3. What tool do you use to mine ores and stone?", answers: ["A) Sword", "B) Axe", "C) Pickaxe", "D) Shovel"], correct: 2 },
-            { question: "4. Where do you sleep to skip the night?", answers: ["A) Chair", "B) Bed", "C) Table", "D) Door"], correct: 1 },
-            { question: "5. Which animal gives you milk?", answers: ["A) Pig", "B) Sheep", "C) Cow", "D) Chicken"], correct: 2 },
-            { question: "6. What weapon do you use to shoot arrows?", answers: ["A) Sword", "B) Bow", "C) Shield", "D) Axe"], correct: 1 },
-            { question: "7. Which food can you make with wheat?", answers: ["A) Apple", "B) Bread", "C) Fish", "D) Carrot"], correct: 1 },
-            { question: "8. What happens to a Zombie when the sun comes up?", answers: ["A) It sleeps", "B) It dances", "C) It burns", "D) It swims"], correct: 2 },
-            { question: "9. What color is a Diamond?", answers: ["A) Red", "B) Blue", "C) Green", "D) Pink"], correct: 1 },
-            { question: "10. How many eyes does a Spider have in Minecraft?", answers: ["A) 2", "B) 4", "C) 6", "D) 8"], correct: 3 }
+            { question: "1. What color is a Creeper?", translation: "คีปเปอร์มีสีอะไร?", answers: ["A) Blue", "B) Green", "C) Red", "D) Yellow"], correct: 1 },
+            { question: "2. Which mob is pink and gives you meat?", translation: "มอนสเตอร์ตัวไหนมีสีชมพูและให้เนื้อ?", answers: ["A) Pig", "B) Cow", "C) Sheep", "D) Chicken"], correct: 0 },
+            { question: "3. What tool do you use to mine ores and stone?", translation: "อุปกรณ์อะไรที่คุณใช้ขุดแร่และหิน?", answers: ["A) Sword", "B) Axe", "C) Pickaxe", "D) Shovel"], correct: 2 },
+            { question: "4. Where do you sleep to skip the night?", translation: "คุณนอนที่ไหนเพื่อข้ามเวลากลางคืน?", answers: ["A) Chair", "B) Bed", "C) Table", "D) Door"], correct: 1 },
+            { question: "5. Which animal gives you milk?", translation: "สัตว์ชนิดใดให้ นม แก่คุณ?", answers: ["A) Pig", "B) Sheep", "C) Cow", "D) Chicken"], correct: 2 },
+            { question: "6. What weapon do you use to shoot arrows?", translation: "อาวุธชนิดใดที่คุณใช้ยิงลูกธนู?", answers: ["A) Sword", "B) Bow", "C) Shield", "D) Axe"], correct: 1 },
+            { question: "7. Which food can you make with wheat?", translation: "อาหารชนิดใดที่คุณทำได้จากข้าวสาลี?", answers: ["A) Apple", "B) Bread", "C) Fish", "D) Carrot"], correct: 1 },
+            { question: "8. What happens to a Zombie when the sun comes up?", translation: "เกิดอะไรขึ้นกับซอมบี้เมื่อพระอาทิตย์ขึ้น?", answers: ["A) It sleeps", "B) It dances", "C) It burns", "D) It swims"], correct: 2 },
+            { question: "9. What color is a Diamond?", translation: "เพชรมีสีอะไร?", answers: ["A) Red", "B) Blue", "C) Green", "D) Pink"], correct: 1 },
+            { question: "10. How many eyes does a Spider have in Minecraft?", translation: "แมงมุมในเกม Minecraft มีกี่ตา?", answers: ["A) 2", "B) 4", "C) 6", "D) 8"], correct: 3 }
         ];
 
         let currentQuestionIndex = 0;
@@ -267,6 +294,8 @@
         const answerButtonsElement = document.getElementById("answer-buttons");
         const nextButton = document.getElementById("next-btn");
         const speakButton = document.getElementById("speak-btn");
+        const translateButton = document.getElementById("translate-btn");
+        const translationBox = document.getElementById("translation-box");
         const currentQuestElement = document.getElementById("current-quest");
         const scoreElement = document.getElementById("score");
         const quizBox = document.getElementById("quiz-box");
@@ -289,6 +318,7 @@
             let currentQuestion = questions[currentQuestionIndex];
             currentQuestElement.innerText = currentQuestionIndex + 1;
             questionElement.innerText = currentQuestion.question;
+            translationBox.innerText = `💡 คำแปล: ${currentQuestion.translation}`;
 
             currentQuestion.answers.forEach((answer, index) => {
                 const button = document.createElement("button");
@@ -304,10 +334,15 @@
 
         function resetState() {
             window.speechSynthesis.cancel();
+            translationBox.classList.add("hide");
             nextButton.classList.add("hide");
             while (answerButtonsElement.firstChild) {
                 answerButtonsElement.removeChild(answerButtonsElement.firstChild);
             }
+        }
+
+        function toggleTranslation() {
+            translationBox.classList.toggle("hide");
         }
 
         function selectAnswer(e) {
@@ -356,6 +391,7 @@
         }
 
         speakButton.addEventListener("click", speakQuestion);
+        translateButton.addEventListener("click", toggleTranslation);
         nextButton.addEventListener("click", () => {
             currentQuestionIndex++;
             showQuestion();
