@@ -224,7 +224,7 @@
 </head>
 <body>
 
-    <!-- หน้าจอ Video Intro จาก Streamable เปิดเสียงทันที -->
+    <!-- หน้าจอ Video Intro -->
     <div id="intro-screen">
         <iframe 
             id="intro-video" 
@@ -272,7 +272,6 @@
     </div>
 
     <script>
-        // ระบบซ่อน Video Intro และหยุดเล่นเสียงทันทีเมื่อตัดเข้าเกม
         const introScreen = document.getElementById("intro-screen");
         const introVideo = document.getElementById("intro-video");
         const skipBtn = document.getElementById("skip-btn");
@@ -284,8 +283,8 @@
             introVideo.src = "";
         }
 
-        // ตัดเข้าเกมและหยุดเสียงวิดีโออัตโนมัติเมื่อครบ 18 วินาที
-        autoCloseTimer = setTimeout(closeIntro, 18000);
+        // ปรับเวลาตั้งปิดอัตโนมัติเป็น 18.5 วินาที (18500 ms)
+        autoCloseTimer = setTimeout(closeIntro, 18500);
 
         skipBtn.addEventListener("click", closeIntro);
 
