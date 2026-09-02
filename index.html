@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minecraft English Quiz for Kids</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
-    <!-- โหลด Streamable Player SDK API -->
+    <!-- Streamable / Player.js SDK -->
     <script src="https://cdn.embed.ly/player-0.1.0.min.js"></script>
     <style>
         * {
@@ -428,8 +428,8 @@
         const nameScreen = document.getElementById("name-screen");
         let activeVideoCallback = null;
 
-        // รหัส ID คลิป Streamable
-        const STREAMABLE_CODE_INTRO = "5kuk8m";
+        // ใช้รหัสคลิปของคุณ ri8s22
+        const STREAMABLE_CODE_INTRO = "ri8s22";
         const STREAMABLE_CODE_LEVEL2 = "ri8s22";
 
         function playVideo(embedCode, onEndCallback) {
@@ -438,16 +438,16 @@
             activeVideoCallback = onEndCallback;
             videoContainer.innerHTML = "";
 
-            // สร้าง iframe สำหรับ Streamable Embed
+            // สร้าง iframe ของ Streamable
             const iframe = document.createElement("iframe");
-            iframe.src = `https://streamable.com/e/${embedCode}?autoplay=1&nocontrols=1`;
-            iframe.allow = "autoplay";
+            iframe.src = `https://streamable.com/e/${embedCode}?autoplay=1&loop=0&nocontrols=1`;
+            iframe.allow = "fullscreen; autoplay";
             iframe.allowFullscreen = true;
             iframe.id = "streamable-player";
 
             videoContainer.appendChild(iframe);
 
-            // ใช้ Embedly Player API ตรวจจับการจบของวิดีโอ
+            // ตรวจจับการจบการเล่นผ่าน Player JS SDK
             if (window.playerjs) {
                 const player = new playerjs.Player(iframe);
                 player.on('ready', () => {
@@ -457,7 +457,7 @@
                     closeVideo();
                 });
             } else {
-                // ตัวสำรองกรณี API ไม่ตอบสนอง (ตัดอัตโนมัติเมื่อครบเวลาประมาณของวิดีโอ)
+                // ตัวสำรองกรณี API ไม่ตอบสนอง (จะตัดอัตโนมัติเมื่อเล่นจบ)
                 setTimeout(() => {
                     closeVideo();
                 }, 15000); 
@@ -474,7 +474,7 @@
             }
         }
 
-        // กดเริ่มเกม -> เล่นวิดีโอ Streamable -> จบแล้วตัดไปหน้าลงชื่อ
+        // กดเริ่มเกม -> เล่นวิดีโอ -> ปิดวิดีโอเข้าหน้ากรอกชื่อ
         launchBtn.addEventListener("click", () => {
             playVideo(STREAMABLE_CODE_INTRO, () => {
                 nameScreen.classList.remove("hide");
