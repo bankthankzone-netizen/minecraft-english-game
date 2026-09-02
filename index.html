@@ -25,6 +25,47 @@
             margin: 0;
             padding: 15px;
         }
+
+        /* --- หน้า Video Intro --- */
+        #intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #intro-video {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .skip-btn {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #55FF55;
+            border: 2px solid #55FF55;
+            padding: 10px 24px;
+            font-family: 'Kanit', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .skip-btn:hover {
+            background: #55FF55;
+            color: #000;
+        }
+
+        /* --- หน้าเกมหลัก --- */
         .quiz-container {
             background-color: #2b2b2b;
             border: 6px solid #000;
@@ -158,7 +199,7 @@
             text-shadow: none;
         }
         .hide {
-            display: none;
+            display: none !important;
         }
         .result-title {
             font-family: 'Press Start 2P', cursive;
@@ -182,6 +223,17 @@
 </head>
 <body>
 
+    <!-- หน้าจอ Video Intro จาก Streamable -->
+    <div id="intro-screen">
+        <iframe 
+            id="intro-video" 
+            src="https://streamable.com/e/5kuk8m?autoplay=1" 
+            allow="autoplay; fullscreen">
+        </iframe>
+        <button class="skip-btn" id="skip-btn">ข้ามไปหน้าเกม ➔</button>
+    </div>
+
+    <!-- Container เกมหลัก -->
     <div class="quiz-container">
         <h1>MINECRAFT<br>ENGLISH QUIZ</h1>
         
@@ -219,6 +271,17 @@
     </div>
 
     <script>
+        // ระบบซ่อน/ข้าม Video Intro
+        const introScreen = document.getElementById("intro-screen");
+        const skipBtn = document.getElementById("skip-btn");
+
+        function closeIntro() {
+            introScreen.classList.add("hide");
+        }
+
+        skipBtn.addEventListener("click", closeIntro);
+
+        // ระบบ Audio Context สำหรับเสียงตอบถูก/ผิด
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         function playCorrectSound() {
@@ -263,6 +326,7 @@
             osc.stop(now + 0.3);
         }
 
+        // ระบบอ่านออกเสียงภาษาอังกฤษ
         function speakQuestion() {
             window.speechSynthesis.cancel();
             const rawText = questions[currentQuestionIndex].question;
