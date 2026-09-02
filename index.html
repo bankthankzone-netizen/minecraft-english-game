@@ -428,7 +428,6 @@
         const nameScreen = document.getElementById("name-screen");
         let activeVideoCallback = null;
 
-        // แยก ID วิดีโอ 2 ตัวอย่างชัดเจน
         const STREAMABLE_CODE_INTRO = "5kuk8m";   // วิดีโอเปิดเกม
         const STREAMABLE_CODE_LEVEL2 = "ri8s22";  // วิดีโอขั้นระหว่าง Lv1 และ Lv2
 
@@ -438,7 +437,6 @@
             activeVideoCallback = onEndCallback;
             videoContainer.innerHTML = "";
 
-            // สร้าง iframe ของ Streamable แบบ Embed
             const iframe = document.createElement("iframe");
             iframe.src = `https://streamable.com/e/${embedCode}?autoplay=1&loop=0&nocontrols=1`;
             iframe.allow = "fullscreen; autoplay";
@@ -447,7 +445,6 @@
 
             videoContainer.appendChild(iframe);
 
-            // ใช้ Player JS SDK ในการจับเหตุการณ์เล่นจบ
             if (window.playerjs) {
                 const player = new playerjs.Player(iframe);
                 player.on('ready', () => {
@@ -457,7 +454,6 @@
                     closeVideo();
                 });
             } else {
-                // สำรองเผื่อ SDK ติดขัด
                 setTimeout(() => {
                     closeVideo();
                 }, 15000); 
@@ -474,7 +470,6 @@
             }
         }
 
-        // กดเปิดเกม -> เล่นวิดีโอเปิดเกม (5kuk8m) -> ปิดเข้าหน้าพิมพ์ชื่อ
         launchBtn.addEventListener("click", () => {
             playVideo(STREAMABLE_CODE_INTRO, () => {
                 nameScreen.classList.remove("hide");
@@ -612,7 +607,7 @@
             }
         ];
 
-        // --- LEVEL 2 QUESTIONS ---
+        // --- LEVEL 2 QUESTIONS (ปรับปรุงคำว่า Monster ในข้อ 2 แล้ว) ---
         const questionsL2 = [
             {
                 question: "1. What item do you use to craft a Torch?",
@@ -622,7 +617,7 @@
                 correct: 0
             },
             {
-                question: "2. Which mob drops Enderman Pearls when defeated?",
+                question: "2. Which monster drops Enderman Pearls when defeated?",
                 translation: "มอนสเตอร์ตัวใดดร็อปเอ็นเดอร์พาร์ล (Enderman Pearls) เมื่อถูกกำจัด?",
                 answers: ["A) Skeleton", "B) Creeper", "C) Enderman", "D) Witch"],
                 answersTranslation: ["A) สเกเลตัน", "B) คีปเปอร์", "C) เอ็นเดอร์แมน", "D) แม่มด"],
@@ -863,7 +858,6 @@
             startGame();
         });
 
-        // กดขึ้น Level 2 -> เล่นวิดีโอคั่น (ri8s22) -> เมื่อเล่นจบเข้าสู่ Level 2
         level2Button.addEventListener("click", () => {
             resultBox.classList.add("hide");
             playVideo(STREAMABLE_CODE_LEVEL2, () => {
