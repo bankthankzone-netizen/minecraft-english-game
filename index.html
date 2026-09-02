@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minecraft English Quiz for Kids</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
-    <!-- ดึง Streamable Player SDK เพื่อให้ดักจับเหตุการณ์วิดีโอจบได้อย่างแม่นยำ -->
+    <!-- ดึง Streamable Player SDK เพื่อดักจับเหตุการณ์วิดีโอเล่นจบ 1 รอบ -->
     <script src="https://cdn.embed.ly/player-0.1.0.min.js"></script>
     <style>
         * {
@@ -100,26 +100,8 @@
             width: 100%;
             height: 100%;
             border: none;
+            pointer-events: none; /* ป้องกันผู้ใช้กดหยุดวิดีโอ */
         }
-        .skip-btn {
-            position: absolute;
-            bottom: 30px;
-            right: 30px;
-            background: rgba(0, 0, 0, 0.8);
-            color: #55FF55;
-            border: 2px solid #55FF55;
-            padding: 10px 24px;
-            font-family: 'Kanit', sans-serif;
-            font-size: 1.2rem;
-            font-weight: 700;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            pointer-events: auto;
-            z-index: 10001;
-        }
-        .skip-btn:hover { background: #55FF55; color: #000; }
 
         /* --- 3. Main Quiz Container --- */
         .quiz-container {
@@ -384,7 +366,6 @@
     <!-- 2. Video Screen -->
     <div id="intro-screen" class="hide">
         <div id="video-container"></div>
-        <button class="skip-btn" id="skip-btn">ข้าม ➔</button>
     </div>
 
     <!-- 3. Main Quiz Container -->
@@ -442,7 +423,6 @@
         const launchBtn = document.getElementById("launch-btn");
         const introScreen = document.getElementById("intro-screen");
         const videoContainer = document.getElementById("video-container");
-        const skipBtn = document.getElementById("skip-btn");
         const nameScreen = document.getElementById("name-screen");
         let activeVideoCallback = null;
 
@@ -456,9 +436,9 @@
             activeVideoCallback = onEndCallback;
             videoContainer.innerHTML = "";
 
-            // โหลดผ่าน iframe embed ของ Streamable พร้อมตั้งค่าเล่นอัตโนมัติและมีเสียง
+            // โหลดผ่าน iframe embed โดยไม่ใส่ loop เพื่อให้จบในรอบเดียว
             const iframe = document.createElement("iframe");
-            iframe.src = `https://streamable.com/e/${videoCode}?autoplay=1&nocontrols=1`;
+            iframe.src = `https://streamable.com/e/${videoCode}?autoplay=1&muted=1&nocontrols=1`;
             iframe.allow = "autoplay; fullscreen";
             iframe.style.width = "100%";
             iframe.style.height = "100%";
@@ -466,7 +446,7 @@
 
             videoContainer.appendChild(iframe);
 
-            // ใช้ Embedly API ตรวจจับว่าวิดีโอเล่นจบแล้วหรือยัง
+            // ใช้ Player SDK ดักจับเหตุการณ์ ended เมื่อวิดีโอเล่นจบ 1 รอบ
             if (window.playerjs) {
                 const player = new playerjs.Player(iframe);
                 player.on('ready', () => {
@@ -489,14 +469,12 @@
             }
         }
 
-        // เมื่อกดเริ่มเกม -> เล่นวิดีโอ Streamable (5kuk8m) ชนิดมีเสียง พอจบจะตัดไปหน้าลงชื่อ
+        // กดเริ่มเกม -> เล่นวิดีโอ Streamable (5kuk8m) 1 รอบจนจบ แล้วตัดไปหน้าลงชื่อ
         launchBtn.addEventListener("click", () => {
             playStreamableVideo(STREAMABLE_CODE_INTRO, () => {
                 nameScreen.classList.remove("hide");
             });
         });
-
-        skipBtn.addEventListener("click", closeIntro);
 
         // Sound Effects (Web Audio API)
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
